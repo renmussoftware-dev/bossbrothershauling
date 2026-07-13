@@ -22,6 +22,8 @@ export function Estimator() {
   const reduce = useReducedMotion();
   const [step, setStep] = useState(0);
   const [photos, setPhotos] = useState<File[]>([]);
+  const controlsRef = useRef<HTMLDivElement>(null);
+  const prevStep = useRef(0);
   const [submitState, setSubmitState] = useState<
     "idle" | "submitting" | "done" | "done-mailto" | "error"
   >("idle");
@@ -67,6 +69,23 @@ export function Estimator() {
     mattresses > 0 ||
     oversized ||
     (otherText?.trim().length ?? 0) > 0;
+
+  // Keep the step header in view when the step changes. Step contents differ
+  // a lot in height (step 1 is tall, step 2 short), so on mobile the panel
+  // shrinking would otherwise leave the viewport past the estimator entirely.
+  // html's scroll-padding-top handles the sticky-nav offset.
+  useEffect(() => {
+    if (prevStep.current === step) return;
+    prevStep.current = step;
+    const el = controlsRef.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top;
+    // Only scroll when the header is actually out of comfortable view —
+    // under the sticky nav, or below the top 40% of the viewport.
+    if (top < 72 || top > window.innerHeight * 0.4) {
+      el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    }
+  }, [step, reduce]);
 
   // Glyphs that surface in the dump bed
   const bedItems: JunkIcon[] = useMemo(() => {
@@ -168,7 +187,7 @@ export function Estimator() {
         </div>
 
         {/* ---------- Controls side ---------- */}
-        <div className="p-6 sm:p-8">
+        <div ref={controlsRef} className="p-6 sm:p-8">
           <StepHeader step={step} />
 
           <form onSubmit={handleSubmit(onSubmit)} className="mt-6">
@@ -710,8 +729,19 @@ function Confirmation({
   viaMailto: boolean;
   hadPhotos: boolean;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  // The confirmation is far shorter than the form it replaces — re-anchor the
+  // viewport so the user actually sees it instead of whatever slid up.
+  useEffect(() => {
+    ref.current?.scrollIntoView({
+      behavior: reduce ? "auto" : "smooth",
+      block: "start",
+    });
+  }, [reduce]);
+
   return (
-    <div className="panel p-8 text-center sm:p-12">
+    <div ref={ref} className="panel p-8 text-center sm:p-12">
       <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-haz-orange text-3xl text-asphalt">
         ✓
       </div>
