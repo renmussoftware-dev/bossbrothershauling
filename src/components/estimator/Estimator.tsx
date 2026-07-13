@@ -264,7 +264,7 @@ export function Estimator() {
                         id="otherText"
                         rows={2}
                         {...register("otherText")}
-                        placeholder="e.g. old shed, a pile of fencing, garage cleanout…"
+                        placeholder="e.g. old shed, a pile of fencing, storage unit cleanout…"
                         className={inputCls}
                       />
                     </div>

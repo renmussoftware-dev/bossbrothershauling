@@ -13,7 +13,7 @@ export const CATEGORY_OPTIONS: {
     value: "household",
     icon: "household",
     label: "Household junk & furniture",
-    hint: "Couches, tables, boxes, general clutter",
+    hint: "Couches, tables, boxes, storage unit contents, general clutter",
   },
   {
     value: "yard",

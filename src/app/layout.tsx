@@ -24,10 +24,12 @@ export const metadata: Metadata = {
     template: `%s | ${SITE.name}`,
   },
   description:
-    "Same-day junk removal and hauling across Santa Rosa County, FL — Milton, Pace, Navarre & Gulf Breeze. Build your load, get an instant estimate, we haul it away.",
+    "Same-day junk removal, hauling & storage unit cleanouts across Santa Rosa County, FL — Milton, Pace, Navarre & Gulf Breeze. Build your load, get an instant estimate, we haul it away.",
   keywords: [
     "junk removal",
     "hauling",
+    "storage unit cleanout",
+    "PCS cleanout",
     "Santa Rosa County",
     "Milton FL",
     "Navarre FL",

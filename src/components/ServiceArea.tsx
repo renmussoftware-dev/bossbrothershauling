@@ -26,6 +26,12 @@ export function ServiceArea() {
             ))}
           </ul>
 
+          <p className="mt-6 text-concrete">
+            Military family? We&rsquo;re minutes from NAS Whiting Field and work
+            with PCSing families all the time — storage unit cleanouts, move-out
+            hauls, and beat-the-deadline pickups are our bread and butter.
+          </p>
+
           <p className="mt-6 text-sm text-concrete">
             Not sure if you&rsquo;re in range?{" "}
             <a href={telHref} className="text-haz-yellow underline-offset-2 hover:underline">

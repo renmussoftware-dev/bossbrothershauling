@@ -48,7 +48,7 @@ export function Hero() {
           <p className="mt-5 max-w-md text-lg text-concrete">
             Two brothers, one truck, zero runaround. Build your load, get a real
             price in under a minute, and we&rsquo;ll haul it off — furniture,
-            yard debris, appliances, or a whole cleanout.
+            yard debris, appliances, storage units, or a whole cleanout.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">

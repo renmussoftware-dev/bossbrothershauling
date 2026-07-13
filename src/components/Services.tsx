@@ -1,7 +1,7 @@
 const SERVICES = [
   {
-    title: "Junk removal",
-    body: "Furniture, old clutter, garage and estate cleanouts — point at the pile and it's gone. We carry it out; you don't lift a thing.",
+    title: "Junk removal & cleanouts",
+    body: "Furniture, old clutter, garage, estate, and storage unit cleanouts — point at the pile and it's gone. PCSing or racing a storage deadline? We'll empty the whole unit, broom-swept. We carry it out; you don't lift a thing.",
     glyph: "household" as const,
   },
   {
