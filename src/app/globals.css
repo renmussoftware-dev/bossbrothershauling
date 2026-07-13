@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Offset in-page anchor scrolling so the sticky nav doesn't cover headings */
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    @apply bg-asphalt text-concrete font-sans antialiased;
+    /* Subtle asphalt grain + soft haz glow, kept cheap (pure CSS gradients) */
+    background-image:
+      radial-gradient(
+        60rem 40rem at 80% -10%,
+        rgba(242, 102, 31, 0.08),
+        transparent 60%
+      ),
+      radial-gradient(
+        50rem 40rem at -10% 10%,
+        rgba(245, 197, 24, 0.06),
+        transparent 55%
+      );
+    background-attachment: fixed;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display text-paper;
+    text-wrap: balance;
+  }
+
+  /* Visible keyboard focus for everything interactive */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 3px solid theme("colors.haz.yellow");
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+
+  /* Raised brushed-steel panel — the core "3D-feel" surface */
+  .panel {
+    @apply rounded-2xl border border-white/5 bg-steel-plate shadow-panel;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5
+      font-display text-base font-semibold uppercase tracking-wide
+      transition-transform duration-150 will-change-transform;
+  }
+  .btn-primary {
+    @apply btn bg-haz-orange text-asphalt shadow-haz hover:-translate-y-0.5 active:translate-y-0;
+  }
+  .btn-secondary {
+    @apply btn border border-white/15 bg-steel-2 text-paper hover:-translate-y-0.5 active:translate-y-0;
+  }
+  .btn-ghost {
+    @apply btn text-concrete hover:text-paper;
+  }
+
+  .label-kicker {
+    @apply font-display text-sm font-semibold uppercase tracking-[0.2em] text-haz-yellow;
+  }
+}
+
+/* Respect users who prefer reduced motion — kill smooth scroll + all animation */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
