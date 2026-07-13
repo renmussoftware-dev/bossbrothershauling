@@ -16,30 +16,40 @@
 //
 // Fees are flat dollars added AFTER the markup multiplier (drive time is a
 // fixed cost per trip — it shouldn't get multiplied like dump costs are).
+//
+// ZONE LOGIC (truck based in Navarre, landfill in Milton): every job drives
+// the Navarre↔Milton corridor anyway, so pickups ON that corridor (Navarre,
+// Holley, Milton, Pace, Bagdad) are the $0 baseline — total drive time is
+// about the same wherever on the corridor the pickup sits. Fees kick in for
+// pickups OFF the corridor: side spurs (Gulf Breeze, Jay, FWB side) at $25,
+// and the Pensacola-side detour at $50.
 // ===========================================================================
 
 export type TripZoneKey = "home" | "county" | "extended";
 
 export const TRIP_ZONES: Record<TripZoneKey, { fee: number }> = {
-  home: { fee: 0 }, // Milton / Pace / Bagdad — our backyard
-  county: { fee: 25 }, // rest of Santa Rosa County (Navarre, Gulf Breeze, Jay)
-  extended: { fee: 50 }, // neighboring-county runs (Pensacola side, FWB side)
+  home: { fee: 0 }, // Navarre↔Milton corridor — driven on every job anyway
+  county: { fee: 25 }, // spurs off the corridor (Gulf Breeze, Jay, FWB side)
+  extended: { fee: 50 }, // Pensacola-side detour
 };
 
 // --- Zip → zone (checked first; most reliable signal in an address) --------
 const ZIP_TO_ZONE: Record<string, { zone: TripZoneKey; place: string }> = {
-  // home — Milton / Pace / Bagdad
+  // home — the Navarre↔Milton corridor
+  "32566": { zone: "home", place: "Navarre" },
   "32570": { zone: "home", place: "Milton" },
   "32571": { zone: "home", place: "Pace" },
   "32572": { zone: "home", place: "Milton" },
   "32583": { zone: "home", place: "Milton" },
   "32530": { zone: "home", place: "Bagdad" },
 
-  // county — south & north ends of Santa Rosa
-  "32566": { zone: "county", place: "Navarre" },
+  // county — spurs off the corridor
   "32561": { zone: "county", place: "Gulf Breeze" },
   "32563": { zone: "county", place: "Gulf Breeze" },
   "32565": { zone: "county", place: "Jay" },
+  "32569": { zone: "county", place: "Mary Esther" },
+  "32547": { zone: "county", place: "Fort Walton Beach" },
+  "32548": { zone: "county", place: "Fort Walton Beach" },
 
   // extended — Pensacola side (Escambia Co.)
   "32501": { zone: "extended", place: "Pensacola" },
@@ -53,30 +63,25 @@ const ZIP_TO_ZONE: Record<string, { zone: TripZoneKey; place: string }> = {
   "32526": { zone: "extended", place: "Pensacola" },
   "32533": { zone: "extended", place: "Cantonment" },
   "32534": { zone: "extended", place: "Pensacola" },
-
-  // extended — Fort Walton side (Okaloosa Co.)
-  "32569": { zone: "extended", place: "Mary Esther" },
-  "32547": { zone: "extended", place: "Fort Walton Beach" },
-  "32548": { zone: "extended", place: "Fort Walton Beach" },
 };
 
 // --- City name → zone (fallback when no zip typed) --------------------------
 // Keys are matched as whole words, case-insensitive, in the address text.
 const CITY_TO_ZONE: Record<string, { zone: TripZoneKey; place: string }> = {
+  navarre: { zone: "home", place: "Navarre" },
+  holley: { zone: "home", place: "Holley" },
   milton: { zone: "home", place: "Milton" },
   pace: { zone: "home", place: "Pace" },
   bagdad: { zone: "home", place: "Bagdad" },
 
-  navarre: { zone: "county", place: "Navarre" },
   "gulf breeze": { zone: "county", place: "Gulf Breeze" },
-  holley: { zone: "county", place: "Holley" },
   jay: { zone: "county", place: "Jay" },
+  "mary esther": { zone: "county", place: "Mary Esther" },
+  "fort walton": { zone: "county", place: "Fort Walton Beach" },
 
   pensacola: { zone: "extended", place: "Pensacola" },
   cantonment: { zone: "extended", place: "Cantonment" },
   "ferry pass": { zone: "extended", place: "Ferry Pass" },
-  "mary esther": { zone: "extended", place: "Mary Esther" },
-  "fort walton": { zone: "extended", place: "Fort Walton Beach" },
 };
 
 export interface TripZoneMatch {
