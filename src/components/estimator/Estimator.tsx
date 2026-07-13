@@ -8,6 +8,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { leadSchema, type LeadFormValues, timeframeOptions } from "@/lib/schema";
 import { calculateEstimate, formatEstimateRange } from "@/lib/pricing";
 import { submitLead } from "@/lib/submitLead";
+import { matchTripZone } from "@/lib/tripZones";
 import type { EstimateInput, LoadCategory } from "@/lib/types";
 import { DumpBed, type JunkIcon } from "./DumpBed";
 import { CATEGORY_OPTIONS, LOAD_SIZE_OPTIONS } from "./loadOptions";
@@ -53,6 +54,11 @@ export function Estimator() {
   const oversized = !!watch("oversized");
   const otherText = watch("otherText") ?? "";
   const loadSize = watch("loadSize");
+  const address = watch("address") ?? "";
+
+  // Zone-based travel fee from a static zip/city lookup — no distance API.
+  // Matching is instant, so the estimate updates live as the address is typed.
+  const tripMatch = useMemo(() => matchTripZone(address), [address]);
 
   const hasSomething =
     categories.length > 0 ||
@@ -80,9 +86,10 @@ export function Estimator() {
       mattresses,
       oversized,
       loadSize,
+      tripFee: tripMatch?.fee ?? 0,
     };
     return calculateEstimate(input);
-  }, [categories, regularTires, largeTires, mattresses, oversized, loadSize]);
+  }, [categories, regularTires, largeTires, mattresses, oversized, loadSize, tripMatch]);
 
   // --- Step navigation with per-step gating ---
   async function next() {
@@ -127,6 +134,7 @@ export function Estimator() {
         lead: parsed,
         estimateLow: estimate?.low ?? null,
         estimateHigh: estimate?.high ?? null,
+        tripZone: tripMatch,
         photos,
       });
       setSubmitState(outcome === "sent" ? "done" : "done-mailto");
@@ -415,6 +423,15 @@ export function Estimator() {
                         autoComplete="street-address"
                         placeholder="Street, city (Milton, Pace, Navarre…)"
                       />
+                      {tripMatch && (
+                        <span
+                          className="mt-1.5 flex items-center gap-1.5 text-sm text-haz-yellow"
+                          role="status"
+                        >
+                          <span aria-hidden>✓</span> {tripMatch.place} — in our
+                          service area. Travel&rsquo;s built into your estimate.
+                        </span>
+                      )}
                     </Field>
 
                     <Field
@@ -480,6 +497,7 @@ export function Estimator() {
                           {formatEstimateRange(estimate)}
                         </span>{" "}
                         · {estimate.loadSizeLabel}
+                        {tripMatch && <> · travel to {tripMatch.place} included</>}
                       </div>
                     )}
 

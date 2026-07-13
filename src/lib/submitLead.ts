@@ -1,6 +1,7 @@
 import type { LeadFormParsed } from "./schema";
 import { timeframeOptions } from "./schema";
 import { SITE } from "./site";
+import type { TripZoneMatch } from "./tripZones";
 
 // ---------------------------------------------------------------------------
 // LEAD SUBMISSION — static-host edition (GitHub Pages has no server).
@@ -25,6 +26,8 @@ export interface LeadPayload {
   lead: LeadFormParsed;
   estimateLow: number | null;
   estimateHigh: number | null;
+  /** Matched trip zone (null when the address wasn't recognized). */
+  tripZone: TripZoneMatch | null;
   photos: File[];
 }
 
@@ -49,7 +52,7 @@ export async function submitLead(payload: LeadPayload): Promise<SubmitOutcome> {
 }
 
 /** Flat, human-readable field names so provider emails read cleanly. */
-function buildFormData({ lead, estimateLow, estimateHigh, photos }: LeadPayload): FormData {
+function buildFormData({ lead, estimateLow, estimateHigh, tripZone, photos }: LeadPayload): FormData {
   const fd = new FormData();
   fd.append("Name", lead.name);
   fd.append("Phone", lead.phone);
@@ -69,6 +72,12 @@ function buildFormData({ lead, estimateLow, estimateHigh, photos }: LeadPayload)
       ? `$${estimateLow}–$${estimateHigh}`
       : "n/a",
   );
+  fd.append(
+    "Trip zone",
+    tripZone
+      ? `${tripZone.place} (${tripZone.zone}, +$${tripZone.fee} travel)`
+      : "unrecognized — confirm on call",
+  );
   // Formspree special fields (harmless elsewhere)
   fd.append("_subject", `New hauling lead — ${lead.name}`);
   fd.append("_replyto", lead.email);
@@ -76,7 +85,7 @@ function buildFormData({ lead, estimateLow, estimateHigh, photos }: LeadPayload)
   return fd;
 }
 
-function buildMailto({ lead, estimateLow, estimateHigh, photos }: LeadPayload): string {
+function buildMailto({ lead, estimateLow, estimateHigh, tripZone, photos }: LeadPayload): string {
   const subject = `Hauling quote request — ${lead.name}`;
   const body = [
     `Name: ${lead.name}`,
@@ -96,6 +105,7 @@ function buildMailto({ lead, estimateLow, estimateHigh, photos }: LeadPayload): 
         ? `$${estimateLow}–$${estimateHigh}`
         : "n/a"
     }`,
+    `Trip zone: ${tripZone ? `${tripZone.place} (${tripZone.zone})` : "unrecognized"}`,
     photos.length > 0
       ? `\n(I have ${photos.length} photo${photos.length > 1 ? "s" : ""} of the load — attaching to this email.)`
       : "",

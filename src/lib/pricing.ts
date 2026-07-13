@@ -90,6 +90,8 @@ export function isPureYardWaste(input: EstimateInput): boolean {
  *  3. dump cost = tonnage × rate, floored at the $10 transaction minimum.
  *  4. Add flat per-item landfill fees (tires; special-waste minimum).
  *  5. Multiply the (dump cost + fees) total by the markup range.
+ *  5b. Add the flat trip-zone travel fee (lib/tripZones.ts) AFTER markup —
+ *      drive time is a fixed per-trip cost, so it isn't multiplied.
  *  6. Floor the low end at the advertised service minimum, round to $5.
  *
  * Returns ONLY customer-safe fields.
@@ -118,9 +120,11 @@ export function calculateEstimate(input: EstimateInput): EstimateResult {
   const specialFees = hasSpecial ? landfill.specialWasteMinimum : 0;
   const fees = tireFees + specialFees;
 
-  // 5. Apply the markup range to the (dump cost + fees) total.
-  const rawLow = (dumpLow + fees) * markup.low;
-  const rawHigh = (dumpHigh + fees) * markup.high;
+  // 5. Apply the markup range to the (dump cost + fees) total, then add the
+  //    flat trip-zone travel fee (not multiplied — see note above).
+  const tripFee = input.tripFee ?? 0;
+  const rawLow = (dumpLow + fees) * markup.low + tripFee;
+  const rawHigh = (dumpHigh + fees) * markup.high + tripFee;
 
   // 6. Floor the low end, round the range outward to the nearest $5.
   let low = Math.floor(Math.max(rawLow, serviceMinimumLow) / roundTo) * roundTo;

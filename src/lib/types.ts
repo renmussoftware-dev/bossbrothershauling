@@ -26,6 +26,11 @@ export interface EstimateInput {
   oversized: boolean;
   /** Truck-bed fill selection. */
   loadSize: LoadSize;
+  /**
+   * Flat travel fee from the trip-zone lookup (see lib/tripZones.ts).
+   * Added after markup — omitted/0 when the address doesn't match a zone.
+   */
+  tripFee?: number;
 }
 
 /**

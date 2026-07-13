@@ -102,7 +102,23 @@ returned to the browser or rendered. The customer only ever sees the final
 rounded **estimate range**. Keep it that way when editing.
 
 The calculation is thoroughly commented in `pricing.ts` if you want to tune the
-formula itself (rates → tonnage → fees → markup → rounded range).
+formula itself (rates → tonnage → fees → markup → trip fee → rounded range).
+
+### Trip-zone travel fees
+
+[`src/lib/tripZones.ts`](src/lib/tripZones.ts) maps the customer's address to a
+travel-fee tier using a **static zip/city lookup table** — no distance API, no
+per-request cost. When the customer types their pickup address, the site
+matches the zip (or city name) and folds the zone's flat fee into the estimate
+range, showing a "✓ Navarre — in our service area" confirmation.
+
+- Fees per zone: `TRIP_ZONES` (`home` $0 / `county` $25 / `extended` $50)
+- Which zips/towns land in which zone: `ZIP_TO_ZONE` and `CITY_TO_ZONE`
+- Unrecognized addresses get **no fee** (stay conservative; you confirm price
+  on the call anyway — the lead email flags these as "unrecognized")
+- The fee is added **after** the markup multiplier (a trip costs the same
+  drive time regardless of load value), and like everything else it's never
+  itemized to the customer — it's just part of the range.
 
 ---
 
