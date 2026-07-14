@@ -12,7 +12,7 @@ const STEPS = [
   {
     n: 3,
     title: "We haul it away",
-    body: "Pick a time that works. We show up, do all the lifting and loading, sweep up, and haul it off. You're done.",
+    body: "Have your pile pulled out where the truck can reach it — driveway, curb, or carport. We show up, do all the lifting and loading from there, and haul it off. You're done.",
   },
 ];
 

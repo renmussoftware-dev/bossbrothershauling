@@ -48,6 +48,12 @@ export const leadSchema = z
     email: z.string().email("Please enter a valid email"),
     address: z.string().min(5, "Please enter the pickup address"),
     timeframe: timeframe,
+    // Staging policy: crew loads from a reachable pile (driveway/curb/carport),
+    // never from inside garages or interior spaces. Must be acknowledged.
+    stagedReady: z.boolean().refine((v) => v === true, {
+      message:
+        "Please confirm your items will be pulled out and ready for pickup.",
+    }),
   })
   .superRefine((data, ctx) => {
     // The load must contain SOMETHING — a category, tires, a mattress,

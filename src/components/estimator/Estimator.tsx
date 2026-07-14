@@ -45,6 +45,7 @@ export function Estimator() {
       mattresses: 0,
       oversized: false,
       otherText: "",
+      stagedReady: false,
     },
   });
 
@@ -509,6 +510,32 @@ export function Estimator() {
                       )}
                     </div>
 
+                    {/* Staging policy acknowledgment — required to submit */}
+                    <div className="rounded-xl border border-white/10 bg-steel-2/40 p-4">
+                      <label className="flex items-start gap-3">
+                        <input
+                          type="checkbox"
+                          {...register("stagedReady")}
+                          className="mt-0.5 h-5 w-5 shrink-0 accent-haz-orange"
+                        />
+                        <span className="text-sm text-paper">
+                          I&rsquo;ll have everything pulled out and piled where
+                          the truck can reach it — driveway, curb, or carport —
+                          by pickup time.
+                        </span>
+                      </label>
+                      <p className="mt-2 pl-8 text-xs text-concrete">
+                        For safety and insurance reasons our crew loads from
+                        your pile — we can&rsquo;t dig items out of garages,
+                        attics, or rooms inside the house.
+                      </p>
+                      {errors.stagedReady && (
+                        <p className="mt-2 pl-8 text-sm text-haz-orange">
+                          {errors.stagedReady.message}
+                        </p>
+                      )}
+                    </div>
+
                     {estimate && (
                       <div className="rounded-xl bg-steel-2/50 p-3 text-center text-sm text-concrete">
                         Your estimate:{" "}
@@ -781,6 +808,10 @@ function Confirmation({
       <p className="mx-auto mt-6 max-w-sm text-xs text-concrete/80">
         Reminder: this is an estimate. Your exact price is confirmed from the
         landfill weight before we haul anything.
+      </p>
+      <p className="mx-auto mt-2 max-w-sm text-xs text-concrete/80">
+        Before we arrive, have everything pulled out and piled where the truck
+        can reach it — driveway, curb, or carport.
       </p>
     </div>
   );

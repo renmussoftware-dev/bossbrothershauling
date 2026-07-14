@@ -1,7 +1,7 @@
 const SERVICES = [
   {
     title: "Junk removal & cleanouts",
-    body: "Furniture, old clutter, garage, estate, and storage unit cleanouts — point at the pile and it's gone. PCSing or racing a storage deadline? We'll empty the whole unit, broom-swept. We carry it out; you don't lift a thing.",
+    body: "Furniture, old clutter, garage, estate, and storage unit cleanouts. Pile it where our truck can back up to it and it's gone — we handle all the loading. PCSing or racing a storage deadline? Drive-up units are perfect: open the door and we'll take it from there.",
     glyph: "household" as const,
   },
   {
@@ -11,7 +11,7 @@ const SERVICES = [
   },
   {
     title: "Appliance & scrap removal",
-    body: "Washers, dryers, fridges, grills, metal and scrap. Heavy and awkward is our specialty — no dents in your doorway.",
+    body: "Washers, dryers, fridges, grills, metal and scrap. Get it to the driveway or carport and the heavy, awkward part is on us.",
     glyph: "appliances" as const,
   },
   {

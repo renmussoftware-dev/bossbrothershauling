@@ -78,6 +78,10 @@ function buildFormData({ lead, estimateLow, estimateHigh, tripZone, photos }: Le
       ? `${tripZone.place} (${tripZone.zone}, +$${tripZone.fee} travel)`
       : "unrecognized — confirm on call",
   );
+  fd.append(
+    "Staging agreed",
+    lead.stagedReady ? "yes — items pulled out & piled for pickup" : "NO",
+  );
   // Formspree special fields (harmless elsewhere)
   fd.append("_subject", `New hauling lead — ${lead.name}`);
   fd.append("_replyto", lead.email);
@@ -106,6 +110,7 @@ function buildMailto({ lead, estimateLow, estimateHigh, tripZone, photos }: Lead
         : "n/a"
     }`,
     `Trip zone: ${tripZone ? `${tripZone.place} (${tripZone.zone})` : "unrecognized"}`,
+    `Staging agreed: ${lead.stagedReady ? "yes" : "no"}`,
     photos.length > 0
       ? `\n(I have ${photos.length} photo${photos.length > 1 ? "s" : ""} of the load — attaching to this email.)`
       : "",
