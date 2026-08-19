@@ -98,9 +98,10 @@ function HeroTruck({ drop }: { drop?: ReturnType<typeof useSpring> }) {
       aria-label="Boss Bros pickup truck pulling a loaded utility trailer"
     >
       <defs>
+        {/* white work-truck paint with a shaded underside */}
         <linearGradient id="cab" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#F2661F" />
-          <stop offset="1" stopColor="#C24810" />
+          <stop offset="0" stopColor="#F7F8FA" />
+          <stop offset="1" stopColor="#C3CAD3" />
         </linearGradient>
         <linearGradient id="bed" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#3A424F" />
@@ -140,16 +141,17 @@ function HeroTruck({ drop }: { drop?: ReturnType<typeof useSpring> }) {
       <rect x="278" y="244" width="46" height="7" rx="3" fill="#171C24" />
       <circle cx="322" cy="248" r="5" fill="#2C333F" stroke="#0E1116" strokeWidth="2" />
 
-      {/* ---------- pickup truck ---------- */}
+      {/* ---------- pickup truck (white work truck) ---------- */}
       {/* bed */}
-      <path d="M316 250 L316 204 L410 204 L410 250 Z" fill="url(#bed)" />
-      <rect x="316" y="200" width="94" height="8" rx="2" fill="#4A5464" />
+      <path d="M316 250 L316 204 L410 204 L410 250 Z" fill="url(#cab)" />
+      <rect x="316" y="200" width="94" height="8" rx="2" fill="#DDE2E8" />
       {/* cab: body + roofline */}
       <path d="M410 250 L410 204 L418 204 L430 172 L472 172 L484 204 L502 210 L502 250 Z" fill="url(#cab)" />
       {/* window */}
-      <path d="M434 178 L468 178 L477 202 L426 202 Z" fill="#BFE3F2" opacity="0.85" />
-      {/* body line + headlight */}
-      <rect x="410" y="226" width="92" height="4" fill="#C24810" />
+      <path d="M434 178 L468 178 L477 202 L426 202 Z" fill="#8FB6CC" opacity="0.9" />
+      {/* bed/cab seam, body line + headlight */}
+      <rect x="409" y="204" width="2" height="46" fill="#9AA3AE" opacity="0.7" />
+      <rect x="410" y="226" width="92" height="4" fill="#9AA3AE" />
       <rect x="497" y="216" width="6" height="9" rx="2" fill="#F5C518" />
 
       {/* wheels — trailer axle, truck rear + front */}
