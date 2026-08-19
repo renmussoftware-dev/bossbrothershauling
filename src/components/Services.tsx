@@ -1,12 +1,12 @@
 const SERVICES = [
   {
     title: "Junk removal & cleanouts",
-    body: "Furniture, old clutter, garage, estate, and storage unit cleanouts. Pile it where our truck can back up to it and it's gone — we handle all the loading. PCSing or racing a storage deadline? Drive-up units are perfect: open the door and we'll take it from there.",
+    body: "Furniture, old clutter, garage, estate, and storage unit cleanouts. Pile it where our truck can back up to it and it's gone — we handle all the loading. PCSing or racing a storage deadline? Pull it out of the unit and we'll have the pile hauled off before your move date.",
     glyph: "household" as const,
   },
   {
     title: "Yard debris & cleanup hauling",
-    body: "Branches, leaves, storm mess, land-clearing debris. We rake it up and haul it off so your yard's ready to use again.",
+    body: "Branches, leaves, storm mess, land-clearing debris. Pile it up and we'll haul it off so your yard's ready to use again.",
     glyph: "yard" as const,
   },
   {

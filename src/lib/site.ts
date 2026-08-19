@@ -10,7 +10,7 @@ export const SITE = {
   url: "https://bossbrothershauling.com",
   tagline: "Junk gone same day.",
 
-  phone: process.env.NEXT_PUBLIC_BUSINESS_PHONE || "(850) 737-0360",
+  phone: process.env.NEXT_PUBLIC_BUSINESS_PHONE || "(850) 281-5184",
   // PLACEHOLDER — swap for the real inbox.
   email: process.env.NEXT_PUBLIC_BUSINESS_EMAIL || "info@bossbrothershauling.com",
 

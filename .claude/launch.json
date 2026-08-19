@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 3000
+    },
+    {
+      "name": "founder-rpg-web",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "cd /d C:\\Users\\bsumn\\Documents\\founder-rpg && npx expo start --web --port 8090"],
+      "port": 8090
     }
   ]
 }
