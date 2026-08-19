@@ -86,8 +86,8 @@ function BossMark() {
           <stop offset="1" stopColor="#000" />
         </linearGradient>
       </defs>
-      {/* dump bed + cab */}
-      <path d="M6 20 L18 20 L18 12 L23 12 L27 17 L27 20 L28 20 L28 23 L6 23 Z" fill="#12151A" />
+      {/* pickup truck silhouette */}
+      <path d="M5 21 L5 14 L17 14 L19 9 L25 9 L27 14 L29 15 L29 21 Z" fill="#12151A" />
       <circle cx="11" cy="24" r="3" fill="#12151A" stroke="#F5C518" strokeWidth="1.5" />
       <circle cx="24" cy="24" r="3" fill="#12151A" stroke="#F5C518" strokeWidth="1.5" />
     </svg>
