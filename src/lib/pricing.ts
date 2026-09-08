@@ -1,5 +1,5 @@
 // ===========================================================================
-// PRICING ENGINE — Boss Bros Hauling
+// PRICING ENGINE — Boss Brothers Hauling
 // ===========================================================================
 //
 // This is the single source of truth for the customer-facing estimate.
@@ -31,7 +31,7 @@ import type { EstimateInput, EstimateResult, LoadSize } from "./types";
 export const PRICING = {
   // --- Landfill disposal rates ------------------------------------------
   // Source: Santa Rosa County Central Landfill rate sheet, effective 2026-01-01.
-  // These are what Boss Bros PAYS at the dump — never shown to the customer.
+  // These are what Boss Brothers PAYS at the dump — never shown to the customer.
   landfill: {
     householdPerTon: 50, // Class I household waste, $/ton
     classIIIPerTon: 50, // Class III construction/demo waste, $/ton

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 152" width="120" height="152" role="img" aria-label="Boss Brothers Hauling">
+  <defs>
+    <linearGradient id="bbGold" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0" stop-color="#FBF0C9"/>
+      <stop offset="0.34" stop-color="#E5BC55"/>
+      <stop offset="0.52" stop-color="#B8862A"/>
+      <stop offset="0.74" stop-color="#F0DA9B"/>
+      <stop offset="1" stop-color="#C9992E"/>
+    </linearGradient>
+    <linearGradient id="bbField" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1D1D20"/>
+      <stop offset="1" stop-color="#08080A"/>
+    </linearGradient>
+  </defs>
+  <path d="M26 37 L20 9 L38 23 L60 5 L82 23 L100 9 L94 37 Z" fill="url(#bbGold)" stroke="#8F661D" stroke-width="1.5" stroke-linejoin="round"/>
+  <circle cx="20" cy="8" r="4.5" fill="url(#bbGold)" stroke="#8F661D" stroke-width="1.2"/>
+  <circle cx="60" cy="4" r="5" fill="url(#bbGold)" stroke="#8F661D" stroke-width="1.2"/>
+  <circle cx="100" cy="8" r="4.5" fill="url(#bbGold)" stroke="#8F661D" stroke-width="1.2"/>
+  <circle cx="38" cy="21" r="3.2" fill="url(#bbGold)" stroke="#8F661D" stroke-width="1.2"/>
+  <circle cx="82" cy="21" r="3.2" fill="url(#bbGold)" stroke="#8F661D" stroke-width="1.2"/>
+  <path d="M12 38 H108 V84 C108 112 88 134 60 148 C32 134 12 112 12 84 Z" fill="url(#bbField)" stroke="url(#bbGold)" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M22 47 H98 V83 C98 105 82 123 60 134 C38 123 22 105 22 83 Z" fill="none" stroke="url(#bbGold)" stroke-width="2" opacity="0.85"/>
+  <text x="60" y="112" text-anchor="middle" fill="url(#bbGold)" font-family="Cinzel, Georgia, 'Times New Roman', serif" font-size="66" font-weight="700" letter-spacing="-9">BB</text>
+</svg>

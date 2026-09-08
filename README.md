@@ -1,7 +1,7 @@
-# Boss Bros Hauling — Website & Pricing Estimator
+# Boss Brothers Hauling — Website & Pricing Estimator
 
 Marketing site with an embedded, multi-step pricing estimator + lead intake for
-**Boss Bros Hauling**, a junk-removal & hauling service in Santa Rosa County, FL.
+**Boss Brothers Hauling**, a junk-removal & hauling service in Santa Rosa County, FL.
 
 Built with **Next.js (App Router) + TypeScript + Tailwind CSS**, with
 **Framer Motion** for the 3D-feel motion, **React Hook Form + Zod** for the form.
@@ -54,11 +54,12 @@ branch* → Branch `main`, folder `/docs`. Custom domain: `bossbrothershauling.c
 ```
 src/
   app/
-    layout.tsx            # fonts (Oswald + Inter), metadata, <html>/<body>
+    layout.tsx            # fonts (Cinzel + Oswald + Inter), metadata, <html>/<body>
     page.tsx              # section composition
     globals.css           # design tokens, focus states, reduced-motion
   components/
     Nav, Hero, Services, HowItWorks, ServiceArea, Footer
+    Logo.tsx              # crowned-shield mark + BOSS/BROTHERS/HAULING lockup
     EstimatorSection.tsx
     estimator/
       Estimator.tsx       # the multi-step tool (load → size → estimate → book)
@@ -157,8 +158,10 @@ Search the codebase for `PLACEHOLDER` and update these:
   `(850) 555-0199` placeholder.
 - **Social links** — `src/lib/site.ts` (`social.facebook / instagram / google`).
 - **Business hours & town list** — `src/lib/site.ts`.
-- **Logo** — a placeholder SVG truck mark is in `src/components/Nav.tsx`
-  (`<BossMark />`). Swap for the real logo.
+- **Logo** — the crowned-shield mark from the truck wrap is drawn as SVG in
+  `src/components/Logo.tsx` (`<BossShield />` / `<BossLogo />`), with static
+  copies in `public/logo.svg`, `public/logo-mark.svg` and `public/icon.svg`
+  (favicon). Swap those out if a vector file of the original art turns up.
 - **Owner / job photos** — the design intentionally uses illustrated 3D elements
   instead of stock photos. Add real owner + before/after job photos where you
   like (e.g. a gallery section) rather than generic stock imagery.
@@ -169,8 +172,12 @@ Search the codebase for `PLACEHOLDER` and update these:
 
 ## Design notes
 
-- **Palette:** asphalt/steel base with safety-vest yellow + safety-orange
-  accents — grounded in the work-truck world, not a generic SaaS look.
+- **Palette:** the truck wrap — true black (`onyx`) and charcoal (`char`)
+  panels under polished gold (`gold.100`–`gold.700`), with bone-white
+  headlines. Gold carries every accent; form errors use `alert` red so they
+  never read as brand accent. Tokens live in `tailwind.config.ts`.
+- **Type:** Cinzel (engraved serif) for the wordmark and top-level headings,
+  Oswald for working headings and UI labels, Inter for body copy.
 - **Signature element:** the dimensional **dump bed** (`DumpBed.tsx`) fills as
   the customer builds their load and item glyphs surface at the load line.
 - **Performance:** the "3D feel" is layered SVG + Framer Motion (no heavy 3D

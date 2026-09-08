@@ -177,7 +177,7 @@ export function Estimator() {
     <div className="panel overflow-hidden">
       <div className="grid gap-0 lg:grid-cols-[1.05fr_1fr]">
         {/* ---------- Visual / dump bed side ---------- */}
-        <div className="relative border-b border-white/5 bg-asphalt-2/60 p-6 sm:p-8 lg:border-b-0 lg:border-r">
+        <div className="relative border-b border-white/5 bg-onyx-2/60 p-6 sm:p-8 lg:border-b-0 lg:border-r">
           <p className="label-kicker">Build your load</p>
           <DumpBed
             loadSize={loadSize ?? null}
@@ -203,7 +203,7 @@ export function Estimator() {
                 {/* ===== STEP 0 — LOAD BUILDER ===== */}
                 {step === 0 && (
                   <fieldset className="space-y-5">
-                    <legend className="font-display text-2xl text-paper">
+                    <legend className="font-display text-2xl text-bone">
                       What&rsquo;s in your load?
                     </legend>
 
@@ -218,14 +218,14 @@ export function Estimator() {
                             aria-pressed={active}
                             className={`rounded-xl border p-4 text-left transition ${
                               active
-                                ? "border-haz-orange bg-haz-orange/10"
-                                : "border-white/10 bg-steel-2/40 hover:border-white/25"
+                                ? "border-gold-500 bg-gold-500/10"
+                                : "border-white/10 bg-char-2/40 hover:border-white/25"
                             }`}
                           >
-                            <span className="block font-display text-lg text-paper">
+                            <span className="block font-display text-lg text-bone">
                               {opt.label}
                             </span>
-                            <span className="mt-1 block text-sm text-concrete">
+                            <span className="mt-1 block text-sm text-ash">
                               {opt.hint}
                             </span>
                           </button>
@@ -234,8 +234,8 @@ export function Estimator() {
                     </div>
 
                     {/* Tires */}
-                    <div className="rounded-xl border border-white/10 bg-steel-2/40 p-4">
-                      <p className="font-display text-lg text-paper">Tires?</p>
+                    <div className="rounded-xl border border-white/10 bg-char-2/40 p-4">
+                      <p className="font-display text-lg text-bone">Tires?</p>
                       <div className="mt-3 grid gap-4 sm:grid-cols-2">
                         <QtyField
                           label="Regular (car / truck)"
@@ -260,7 +260,7 @@ export function Estimator() {
                     </div>
 
                     {/* Mattress + oversized (special handling) */}
-                    <div className="rounded-xl border border-white/10 bg-steel-2/40 p-4 space-y-3">
+                    <div className="rounded-xl border border-white/10 bg-char-2/40 p-4 space-y-3">
                       <QtyField
                         label="Mattresses (special handling)"
                         {...register("mattresses")}
@@ -269,11 +269,11 @@ export function Estimator() {
                           setValue("mattresses", Math.max(0, mattresses + d))
                         }
                       />
-                      <label className="flex items-center gap-3 text-sm text-concrete">
+                      <label className="flex items-center gap-3 text-sm text-ash">
                         <input
                           type="checkbox"
                           {...register("oversized")}
-                          className="h-5 w-5 accent-haz-orange"
+                          className="h-5 w-5 accent-gold-500"
                         />
                         I&rsquo;ve got an oversized / hard-to-handle item
                         (hot tub, piano, big appliance)
@@ -284,7 +284,7 @@ export function Estimator() {
                     <div>
                       <label
                         htmlFor="otherText"
-                        className="mb-1 block text-sm font-medium text-concrete"
+                        className="mb-1 block text-sm font-medium text-ash"
                       >
                         Something else, or not sure? Tell us what you&rsquo;ve got.
                       </label>
@@ -298,7 +298,7 @@ export function Estimator() {
                     </div>
 
                     {errors.categories && (
-                      <p className="text-sm text-haz-orange">
+                      <p className="text-sm text-alert">
                         {errors.categories.message}
                       </p>
                     )}
@@ -308,10 +308,10 @@ export function Estimator() {
                 {/* ===== STEP 1 — LOAD SIZE ===== */}
                 {step === 1 && (
                   <fieldset className="space-y-4">
-                    <legend className="font-display text-2xl text-paper">
+                    <legend className="font-display text-2xl text-bone">
                       How big is the pile?
                     </legend>
-                    <p className="text-sm text-concrete">
+                    <p className="text-sm text-ash">
                       Pick the closest fit — watch the bed fill up. We confirm the
                       exact size on-site.
                     </p>
@@ -330,15 +330,15 @@ export function Estimator() {
                             aria-pressed={active}
                             className={`flex items-center justify-between rounded-xl border p-4 text-left transition ${
                               active
-                                ? "border-haz-orange bg-haz-orange/10"
-                                : "border-white/10 bg-steel-2/40 hover:border-white/25"
+                                ? "border-gold-500 bg-gold-500/10"
+                                : "border-white/10 bg-char-2/40 hover:border-white/25"
                             }`}
                           >
                             <span>
-                              <span className="block font-display text-lg text-paper">
+                              <span className="block font-display text-lg text-bone">
                                 {opt.label}
                               </span>
-                              <span className="mt-1 block text-sm text-concrete">
+                              <span className="mt-1 block text-sm text-ash">
                                 {opt.blurb}
                               </span>
                             </span>
@@ -346,7 +346,7 @@ export function Estimator() {
                               aria-hidden
                               className={`ml-3 h-5 w-5 shrink-0 rounded-full border-2 ${
                                 active
-                                  ? "border-haz-orange bg-haz-orange"
+                                  ? "border-gold-500 bg-gold-500"
                                   : "border-white/30"
                               }`}
                             />
@@ -360,20 +360,20 @@ export function Estimator() {
                 {/* ===== STEP 2 — ESTIMATE REVEAL ===== */}
                 {step === 2 && estimate && (
                   <div className="space-y-5">
-                    <h3 className="font-display text-2xl text-paper">
+                    <h3 className="font-display text-2xl text-bone">
                       Your estimate
                     </h3>
-                    <div className="rounded-2xl border border-haz-yellow/40 bg-asphalt-2 p-6 text-center">
+                    <div className="rounded-2xl border border-gold-300/40 bg-onyx-2 p-6 text-center">
                       <p className="label-kicker">Estimated range</p>
-                      <p className="mt-2 font-display text-5xl font-bold tabular-nums text-haz-yellow">
+                      <p className="mt-2 font-display text-5xl font-bold tabular-nums text-gold-300">
                         {formatEstimateRange(estimate)}
                       </p>
-                      <p className="mt-1 text-sm text-concrete">
+                      <p className="mt-1 text-sm text-ash">
                         for a {estimate.loadSizeLabel.toLowerCase()}
                       </p>
                     </div>
-                    <div className="rounded-xl border border-white/10 bg-steel-2/40 p-4 text-sm text-concrete">
-                      <p className="font-semibold text-paper">
+                    <div className="rounded-xl border border-white/10 bg-char-2/40 p-4 text-sm text-ash">
+                      <p className="font-semibold text-bone">
                         Why a range, not one number?
                       </p>
                       <p className="mt-1">
@@ -383,14 +383,14 @@ export function Estimator() {
                         you send, before we haul a thing.
                       </p>
                       {estimate.hasSpecialHandling && (
-                        <p className="mt-2 text-haz-yellow">
+                        <p className="mt-2 text-gold-300">
                           Heads up: mattresses and oversized items carry a
                           special-handling fee at the dump — that&rsquo;s baked
                           into this range.
                         </p>
                       )}
                     </div>
-                    <p className="text-xs text-concrete/80">
+                    <p className="text-xs text-ash/80">
                       This is an estimate, not a final or guaranteed price.
                     </p>
                   </div>
@@ -399,7 +399,7 @@ export function Estimator() {
                 {/* ===== STEP 3 — CONTACT + SUBMIT ===== */}
                 {step === 3 && (
                   <div className="space-y-4">
-                    <h3 className="font-display text-2xl text-paper">
+                    <h3 className="font-display text-2xl text-bone">
                       Where are we hauling from?
                     </h3>
 
@@ -445,7 +445,7 @@ export function Estimator() {
                       />
                       {tripMatch && (
                         <span
-                          className="mt-1.5 flex items-center gap-1.5 text-sm text-haz-yellow"
+                          className="mt-1.5 flex items-center gap-1.5 text-sm text-gold-300"
                           role="status"
                         >
                           <span aria-hidden>✓</span> {tripMatch.place} — in our
@@ -475,14 +475,14 @@ export function Estimator() {
                     </Field>
 
                     {/* Photo upload — optional but strongly encouraged */}
-                    <div className="rounded-xl border border-dashed border-haz-yellow/40 bg-haz-yellow/5 p-4">
-                      <p className="font-display text-lg text-paper">
+                    <div className="rounded-xl border border-dashed border-gold-300/40 bg-gold-300/5 p-4">
+                      <p className="font-display text-lg text-bone">
                         Add photos{" "}
-                        <span className="text-sm font-normal text-haz-yellow">
+                        <span className="text-sm font-normal text-gold-300">
                           (optional, but the #1 way to lock in an accurate price)
                         </span>
                       </p>
-                      <p className="mt-1 text-sm text-concrete">
+                      <p className="mt-1 text-sm text-ash">
                         A couple of quick pics of the pile tells us way more than
                         any form can.
                       </p>
@@ -511,35 +511,35 @@ export function Estimator() {
                     </div>
 
                     {/* Staging policy acknowledgment — required to submit */}
-                    <div className="rounded-xl border border-white/10 bg-steel-2/40 p-4">
+                    <div className="rounded-xl border border-white/10 bg-char-2/40 p-4">
                       <label className="flex items-start gap-3">
                         <input
                           type="checkbox"
                           {...register("stagedReady")}
-                          className="mt-0.5 h-5 w-5 shrink-0 accent-haz-orange"
+                          className="mt-0.5 h-5 w-5 shrink-0 accent-gold-500"
                         />
-                        <span className="text-sm text-paper">
+                        <span className="text-sm text-bone">
                           I&rsquo;ll have everything pulled out and piled where
                           the truck can reach it — driveway, curb, or carport —
                           by pickup time.
                         </span>
                       </label>
-                      <p className="mt-2 pl-8 text-xs text-concrete">
+                      <p className="mt-2 pl-8 text-xs text-ash">
                         For safety and insurance reasons our crew loads from
                         your pile — we can&rsquo;t dig items out of garages,
                         attics, or rooms inside the house.
                       </p>
                       {errors.stagedReady && (
-                        <p className="mt-2 pl-8 text-sm text-haz-orange">
+                        <p className="mt-2 pl-8 text-sm text-alert">
                           {errors.stagedReady.message}
                         </p>
                       )}
                     </div>
 
                     {estimate && (
-                      <div className="rounded-xl bg-steel-2/50 p-3 text-center text-sm text-concrete">
+                      <div className="rounded-xl bg-char-2/50 p-3 text-center text-sm text-ash">
                         Your estimate:{" "}
-                        <span className="font-display text-base text-haz-yellow">
+                        <span className="font-display text-base text-gold-300">
                           {formatEstimateRange(estimate)}
                         </span>{" "}
                         · {estimate.loadSizeLabel}
@@ -548,7 +548,7 @@ export function Estimator() {
                     )}
 
                     {submitState === "error" && (
-                      <p className="text-sm text-haz-orange">
+                      <p className="text-sm text-alert">
                         Something went wrong sending that. Give us a call and
                         we&rsquo;ll sort it out.
                       </p>
@@ -599,7 +599,7 @@ export function Estimator() {
 // ---------------------------------------------------------------------------
 
 const inputCls =
-  "w-full rounded-xl border border-white/10 bg-asphalt px-4 py-3 text-paper placeholder:text-concrete/50 focus:border-haz-yellow focus:outline-none";
+  "w-full rounded-xl border border-white/10 bg-onyx px-4 py-3 text-bone placeholder:text-ash/50 focus:border-gold-300 focus:outline-none";
 
 function StepHeader({ step }: { step: number }) {
   return (
@@ -610,8 +610,8 @@ function StepHeader({ step }: { step: number }) {
             <span
               className={`grid h-7 w-7 shrink-0 place-items-center rounded-full font-display text-sm ${
                 i <= step
-                  ? "bg-haz-orange text-asphalt"
-                  : "bg-steel-2 text-concrete"
+                  ? "bg-gold-500 text-onyx"
+                  : "bg-char-2 text-ash"
               }`}
             >
               {i + 1}
@@ -619,7 +619,7 @@ function StepHeader({ step }: { step: number }) {
             {i < STEPS.length - 1 && (
               <span
                 className={`h-0.5 flex-1 rounded ${
-                  i < step ? "bg-haz-orange" : "bg-steel-2"
+                  i < step ? "bg-gold-500" : "bg-char-2"
                 }`}
               />
             )}
@@ -641,19 +641,19 @@ function LiveEstimate({
   loadSize: string | undefined;
 }) {
   return (
-    <div className="mt-6 rounded-xl border border-white/10 bg-asphalt/70 p-4 text-center">
+    <div className="mt-6 rounded-xl border border-white/10 bg-onyx/70 p-4 text-center">
       {estimate ? (
         <>
           <p className="label-kicker">Live estimate</p>
-          <p className="font-display text-3xl font-bold tabular-nums text-haz-yellow">
+          <p className="font-display text-3xl font-bold tabular-nums text-gold-300">
             {formatEstimateRange(estimate)}
           </p>
-          <p className="text-xs text-concrete">
+          <p className="text-xs text-ash">
             Estimate only — final price confirmed on-site.
           </p>
         </>
       ) : (
-        <p className="text-sm text-concrete">
+        <p className="text-sm text-ash">
           {loadSize
             ? "Calculating…"
             : "Pick a load size to see your estimate."}
@@ -676,26 +676,26 @@ function QtyField({
 } & React.ComponentPropsWithoutRef<"input">) {
   return (
     <div>
-      <span className="mb-1 block text-sm text-concrete">{label}</span>
+      <span className="mb-1 block text-sm text-ash">{label}</span>
       <div className="flex items-stretch overflow-hidden rounded-lg border border-white/10">
         <button
           type="button"
           aria-label={`Decrease ${label}`}
           onClick={() => onStep(-1)}
-          className="grid w-11 place-items-center bg-steel-2 text-lg text-paper hover:bg-steel"
+          className="grid w-11 place-items-center bg-char-2 text-lg text-bone hover:bg-char"
         >
           −
         </button>
         <input
           {...register}
           inputMode="numeric"
-          className="w-full min-w-0 bg-asphalt px-2 text-center tabular-nums text-paper focus:outline-none"
+          className="w-full min-w-0 bg-onyx px-2 text-center tabular-nums text-bone focus:outline-none"
         />
         <button
           type="button"
           aria-label={`Increase ${label}`}
           onClick={() => onStep(1)}
-          className="grid w-11 place-items-center bg-steel-2 text-lg text-paper hover:bg-steel"
+          className="grid w-11 place-items-center bg-char-2 text-lg text-bone hover:bg-char"
         >
           +
         </button>
@@ -715,11 +715,11 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-sm font-medium text-concrete">
+      <span className="mb-1 block text-sm font-medium text-ash">
         {label}
       </span>
       {children}
-      {error && <span className="mt-1 block text-sm text-haz-orange">{error}</span>}
+      {error && <span className="mt-1 block text-sm text-alert">{error}</span>}
     </label>
   );
 }
@@ -739,7 +739,7 @@ function PhotoThumb({ file, onRemove }: { file: File; onRemove: () => void }) {
         type="button"
         onClick={onRemove}
         aria-label={`Remove ${file.name}`}
-        className="absolute right-0 top-0 grid h-5 w-5 place-items-center bg-asphalt/80 text-xs text-paper"
+        className="absolute right-0 top-0 grid h-5 w-5 place-items-center bg-onyx/80 text-xs text-bone"
       >
         ✕
       </button>
@@ -769,15 +769,15 @@ function Confirmation({
 
   return (
     <div ref={ref} className="panel p-8 text-center sm:p-12">
-      <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-haz-orange text-3xl text-asphalt">
+      <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-gold-500 text-3xl text-onyx">
         ✓
       </div>
-      <h3 className="mt-5 font-display text-3xl text-paper">
+      <h3 className="mt-5 font-display text-3xl text-bone">
         {viaMailto
           ? "Almost there — hit send on that email."
           : "Got it — you’re on the board."}
       </h3>
-      <p className="mx-auto mt-3 max-w-md text-concrete">
+      <p className="mx-auto mt-3 max-w-md text-ash">
         {viaMailto ? (
           <>
             Your email app just opened with your quote request filled in.
@@ -797,19 +797,19 @@ function Confirmation({
         )}
       </p>
       {estimate && (
-        <p className="mt-5 inline-block rounded-xl bg-steel-2/60 px-5 py-3">
+        <p className="mt-5 inline-block rounded-xl bg-char-2/60 px-5 py-3">
           <span className="label-kicker">Your estimate</span>
           <br />
-          <span className="font-display text-2xl text-haz-yellow">
+          <span className="font-display text-2xl text-gold-300">
             {formatEstimateRange(estimate)}
           </span>
         </p>
       )}
-      <p className="mx-auto mt-6 max-w-sm text-xs text-concrete/80">
+      <p className="mx-auto mt-6 max-w-sm text-xs text-ash/80">
         Reminder: this is an estimate. Your exact price is confirmed from the
         landfill weight before we haul anything.
       </p>
-      <p className="mx-auto mt-2 max-w-sm text-xs text-concrete/80">
+      <p className="mx-auto mt-2 max-w-sm text-xs text-ash/80">
         Before we arrive, have everything pulled out and piled where the truck
         can reach it — driveway, curb, or carport.
       </p>

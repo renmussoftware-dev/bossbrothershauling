@@ -58,21 +58,26 @@ export function DumpBed({
       preserveAspectRatio="xMidYMid meet"
     >
       <defs>
-        <linearGradient id="steelFace" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#2C333F" />
-          <stop offset="1" stopColor="#1B212A" />
+        <linearGradient id="charFace" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#33333A" />
+          <stop offset="1" stopColor="#1A1A1D" />
         </linearGradient>
-        <linearGradient id="steelSide" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="#39414E" />
-          <stop offset="1" stopColor="#232A34" />
+        <linearGradient id="charSide" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#42424A" />
+          <stop offset="1" stopColor="#232327" />
         </linearGradient>
-        <linearGradient id="steelTop" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#454E5C" />
-          <stop offset="1" stopColor="#2C333F" />
+        <linearGradient id="charTop" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#4C4C55" />
+          <stop offset="1" stopColor="#2E2E34" />
+        </linearGradient>
+        <linearGradient id="goldTrim" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#FBF0C9" />
+          <stop offset="0.45" stopColor="#D4A537" />
+          <stop offset="1" stopColor="#8F661D" />
         </linearGradient>
         <linearGradient id="junkFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#7A828F" />
-          <stop offset="1" stopColor="#474E5A" />
+          <stop offset="0" stopColor="#6F6C66" />
+          <stop offset="1" stopColor="#3E3C39" />
         </linearGradient>
         {/* Clip the fill + icons to the front-face interior so nothing spills out */}
         <clipPath id="bedInterior">
@@ -85,13 +90,13 @@ export function DumpBed({
 
       {/* ---- 3D box faces (draw back-to-front for depth) ---- */}
       {/* left side face */}
-      <polygon points="70,110 110,72 110,244 70,288" fill="url(#steelSide)" />
+      <polygon points="70,110 110,72 110,244 70,288" fill="url(#charSide)" />
       {/* right side face */}
-      <polygon points="370,110 330,72 330,244 370,288" fill="url(#steelSide)" opacity="0.9" />
+      <polygon points="370,110 330,72 330,244 370,288" fill="url(#charSide)" opacity="0.9" />
       {/* top opening face */}
-      <polygon points="110,72 330,72 370,110 70,110" fill="url(#steelTop)" />
+      <polygon points="110,72 330,72 370,110 70,110" fill="url(#charTop)" />
       {/* inner back wall seen through the opening */}
-      <polygon points="110,72 330,72 330,244 110,244" fill="#171C24" />
+      <polygon points="110,72 330,72 330,244 110,244" fill="#121214" />
 
       {/* ---- fill gauge on the front interior ---- */}
       <g clipPath="url(#bedInterior)">
@@ -112,7 +117,7 @@ export function DumpBed({
           x={GAUGE.x}
           width={GAUGE.w}
           height={4}
-          fill="#F5C518"
+          fill="#D4A537"
           initial={false}
           animate={{ y: fillY - 2, opacity: loadSize ? 1 : 0.3 }}
           transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 120, damping: 18 }}
@@ -121,19 +126,26 @@ export function DumpBed({
         <JunkGlyphs items={items} surfaceY={fillY} reduce={!!reduce} />
       </g>
 
-      {/* ---- steel frame drawn over everything ---- */}
+      {/* ---- gold-trimmed frame drawn over everything ---- */}
       <polygon
         points="70,110 370,110 370,288 70,288"
         fill="none"
-        stroke="#0E1116"
-        strokeWidth="3"
+        stroke="url(#goldTrim)"
+        strokeWidth="2.5"
+        opacity="0.7"
       />
-      {/* front rim + hazard stripe */}
-      <polygon points="110,72 330,72 370,110 70,110" fill="none" stroke="#0E1116" strokeWidth="3" />
-      <rect x="70" y="108" width="300" height="7" fill="#F5C518" />
-      <rect x="70" y="108" width="300" height="7" fill="url(#hazStripe)" opacity="0.35" />
-      <pattern id="hazStripe" width="16" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-        <rect width="8" height="8" fill="#12151A" />
+      {/* front rim + gold stripe */}
+      <polygon
+        points="110,72 330,72 370,110 70,110"
+        fill="none"
+        stroke="url(#goldTrim)"
+        strokeWidth="2"
+        opacity="0.5"
+      />
+      <rect x="70" y="108" width="300" height="7" fill="url(#goldTrim)" />
+      <rect x="70" y="108" width="300" height="7" fill="url(#goldStripe)" opacity="0.35" />
+      <pattern id="goldStripe" width="16" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <rect width="8" height="8" fill="#0B0B0C" />
       </pattern>
     </svg>
   );
@@ -178,7 +190,7 @@ function JunkGlyphs({
 
 /** Minimal 24x24 debris glyphs — extruded look via a dark drop layer. */
 function Glyph({ kind }: { kind: JunkIcon }) {
-  const s = { stroke: "#12151A", strokeWidth: 1.5, strokeLinejoin: "round" as const };
+  const s = { stroke: "#0B0B0C", strokeWidth: 1.5, strokeLinejoin: "round" as const };
   switch (kind) {
     case "household": // armchair
       return (
@@ -216,9 +228,9 @@ function Glyph({ kind }: { kind: JunkIcon }) {
       );
     case "tires": // tire
       return (
-        <g fill="#2B2F36" stroke="#12151A" strokeWidth="1.5">
+        <g fill="#1E1E21" stroke="#0B0B0C" strokeWidth="1.5">
           <circle cx="12" cy="12" r="9" />
-          <circle cx="12" cy="12" r="4" fill="#565C66" />
+          <circle cx="12" cy="12" r="4" fill="#4E4E56" />
         </g>
       );
     case "mattress": // mattress

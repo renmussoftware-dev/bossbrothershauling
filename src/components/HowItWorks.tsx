@@ -33,12 +33,12 @@ export function HowItWorks() {
             <li key={s.n} className="panel relative p-7">
               <span
                 aria-hidden
-                className="font-display text-6xl font-bold leading-none text-haz-orange/30"
+                className="font-display text-6xl font-bold leading-none text-gold-500/30"
               >
                 {String(s.n).padStart(2, "0")}
               </span>
               <h3 className="mt-2 text-2xl">{s.title}</h3>
-              <p className="mt-2 text-concrete">{s.body}</p>
+              <p className="mt-2 text-ash">{s.body}</p>
             </li>
           ))}
         </ol>
