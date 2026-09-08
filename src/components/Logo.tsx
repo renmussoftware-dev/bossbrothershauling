@@ -1,15 +1,23 @@
 // ===========================================================================
-// BRAND LOGO — crowned shield + BB monogram, drawn from the truck-wrap art.
+// BRAND LOGO — the owners' crowned shield + the BOSS/BROTHERS/HAULING type.
 //
 // Two pieces:
-//   <BossShield />  the mark on its own (nav, favicons, truck doors)
+//   <BossShield />  the mark on its own (nav, footer, truck doors)
 //   <BossLogo />    the full stacked lockup: BOSS / BROTHERS / — HAULING —
 //
-// Kept as SVG + HTML text (rather than a raster) so it stays crisp at any
-// size, inherits the Cinzel brand face, and costs nothing to load.
+// The shield is the supplied artwork as a PNG; the wordmark stays live text
+// in Cinzel so it scales, reflows and stays selectable. If a vector of the
+// shield (AI/EPS/SVG) ever turns up, swap the <img> for it — nothing else
+// here needs to change.
 // ===========================================================================
 
-/** Crowned shield with the interlocked BB monogram. */
+/**
+ * The crowned shield, straight from the owners' logo file.
+ *
+ * This is the real artwork (public/logo-mark.png, downscaled from the 3000px
+ * master in brand/logo/) rather than a redraw — the gradients, the engraved
+ * bevel and the overlapped BB are not things to reproduce by hand in SVG.
+ */
 export function BossShield({
   className,
   title,
@@ -18,90 +26,21 @@ export function BossShield({
   title?: string;
 }) {
   return (
-    <svg
-      viewBox="0 0 120 152"
-      className={className}
-      role={title ? "img" : undefined}
-      aria-label={title}
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/logo-mark.png"
+      alt={title ?? ""}
       aria-hidden={title ? undefined : true}
-    >
-      <defs>
-        <linearGradient id="bbGold" x1="0" y1="0" x2="0.35" y2="1">
-          <stop offset="0" stopColor="#FBF0C9" />
-          <stop offset="0.34" stopColor="#E5BC55" />
-          <stop offset="0.52" stopColor="#B8862A" />
-          <stop offset="0.74" stopColor="#F0DA9B" />
-          <stop offset="1" stopColor="#C9992E" />
-        </linearGradient>
-        <linearGradient id="bbField" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#1D1D20" />
-          <stop offset="1" stopColor="#08080A" />
-        </linearGradient>
-      </defs>
-
-      {/* crown */}
-      <path
-        d="M26 37 L20 9 L38 23 L60 5 L82 23 L100 9 L94 37 Z"
-        fill="url(#bbGold)"
-        stroke="#8F661D"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-      />
-      {[
-        [20, 8, 4.5],
-        [60, 4, 5],
-        [100, 8, 4.5],
-        [38, 21, 3.2],
-        [82, 21, 3.2],
-      ].map(([cx, cy, r]) => (
-        <circle
-          key={`${cx}-${cy}`}
-          cx={cx}
-          cy={cy}
-          r={r}
-          fill="url(#bbGold)"
-          stroke="#8F661D"
-          strokeWidth="1.2"
-        />
-      ))}
-
-      {/* shield body */}
-      <path
-        d="M12 38 H108 V84 C108 112 88 134 60 148 C32 134 12 112 12 84 Z"
-        fill="url(#bbField)"
-        stroke="url(#bbGold)"
-        strokeWidth="7"
-        strokeLinejoin="round"
-      />
-      {/* inner engraved rule */}
-      <path
-        d="M22 47 H98 V83 C98 105 82 123 60 134 C38 123 22 105 22 83 Z"
-        fill="none"
-        stroke="url(#bbGold)"
-        strokeWidth="2"
-        opacity="0.85"
-      />
-
-      {/* BB monogram */}
-      <text
-        x="60"
-        y="112"
-        textAnchor="middle"
-        fill="url(#bbGold)"
-        fontFamily="var(--font-cinzel), Georgia, 'Times New Roman', serif"
-        fontSize="66"
-        fontWeight="700"
-        letterSpacing="-9"
-      >
-        BB
-      </text>
-    </svg>
+      width={233}
+      height={320}
+      className={className}
+    />
   );
 }
 
 const SIZES = {
   sm: {
-    shield: "h-10 w-auto",
+    shield: "h-12 w-auto",
     gap: "gap-5",
     boss: "text-lg",
     sub: "text-[0.6rem]",
@@ -109,7 +48,7 @@ const SIZES = {
     hang: "mr-1.5",
   },
   md: {
-    shield: "h-14 w-auto",
+    shield: "h-16 w-auto",
     gap: "gap-6",
     boss: "text-2xl",
     sub: "text-[0.7rem]",
@@ -117,7 +56,7 @@ const SIZES = {
     hang: "mr-1.5",
   },
   lg: {
-    shield: "h-24 w-auto",
+    shield: "h-28 w-auto",
     gap: "gap-8",
     boss: "text-4xl",
     sub: "text-xs",

@@ -164,10 +164,15 @@ Search the codebase for `PLACEHOLDER` and update these:
   `(850) 555-0199` placeholder.
 - **Social links** — `src/lib/site.ts` (`social.facebook / instagram / google`).
 - **Business hours & town list** — `src/lib/site.ts`.
-- **Logo** — the crowned-shield mark from the truck wrap is drawn as SVG in
-  `src/components/Logo.tsx` (`<BossShield />` / `<BossLogo />`), with static
-  copies in `public/logo.svg`, `public/logo-mark.svg` and `public/icon.svg`
-  (favicon). Swap those out if a vector file of the original art turns up.
+- **Logo** — the owners' real artwork. Master lives at
+  `brand/logo/boss-brothers-shield.png` (3000px, transparent); the site serves
+  a downscaled `public/logo-mark.png` through `<BossShield />`, with favicons
+  (`icon-32`, `icon-512`, `apple-icon-180`) and the social card (`og.png`)
+  generated from the same file. Only the shield is raster — the
+  BOSS / BROTHERS / HAULING wordmark beside it is live Cinzel text.
+  **If a vector of the shield (AI/EPS/SVG) turns up, use it:** swap the `<img>`
+  in `src/components/Logo.tsx` and re-run `brand/qr/make-qr.py`. Vector matters
+  most for large-format print (truck wraps, signage), less so for the site.
 - **Owner / job photos** — the design intentionally uses illustrated 3D elements
   instead of stock photos. Add real owner + before/after job photos where you
   like (e.g. a gallery section) rather than generic stock imagery.

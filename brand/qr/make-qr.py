@@ -1,5 +1,6 @@
 # Regenerates every QR asset in this folder. Run from the repo root:
 #   pip install segno && python3 brand/qr/make-qr.py
+import base64
 import segno
 
 URL = "https://bossbrothershauling.com"
@@ -18,19 +19,20 @@ GOLD_DEFS = '''  <linearGradient id="g" x1="0" y1="0" x2="0.35" y2="1">
     <stop offset="1" stop-color="#C9992E"/>
   </linearGradient>'''
 
-def shield(x, y, scale):
-    """The brand mark, scaled from its native 120x152 box."""
-    return f'''  <g transform="translate({x} {y}) scale({scale})">
-    <path d="M26 37 L20 9 L38 23 L60 5 L82 23 L100 9 L94 37 Z" fill="url(#g)"/>
-    <circle cx="20" cy="8" r="4.5" fill="url(#g)"/>
-    <circle cx="60" cy="4" r="5" fill="url(#g)"/>
-    <circle cx="100" cy="8" r="4.5" fill="url(#g)"/>
-    <circle cx="38" cy="21" r="3.2" fill="url(#g)"/>
-    <circle cx="82" cy="21" r="3.2" fill="url(#g)"/>
-    <path d="M12 38 H108 V84 C108 112 88 134 60 148 C32 134 12 112 12 84 Z" fill="#0B0B0C" stroke="url(#g)" stroke-width="7" stroke-linejoin="round"/>
-    <path d="M22 47 H98 V83 C98 105 82 123 60 134 C38 123 22 105 22 83 Z" fill="none" stroke="url(#g)" stroke-width="2" opacity="0.85"/>
-    <text x="60" y="112" text-anchor="middle" fill="url(#g)" font-family="Cinzel, Georgia, 'Times New Roman', serif" font-size="66" font-weight="700" letter-spacing="-9">BB</text>
-  </g>'''
+# The owners' shield, embedded as a data URI so each SVG is a single portable
+# file a print shop can open with nothing else attached.
+_LOGO = base64.b64encode(open("public/logo-mark.png", "rb").read()).decode()
+LOGO_W, LOGO_H = 233, 320
+
+
+def shield(x, y, box):
+    """The real mark, fitted into a `box`-wide square, centred."""
+    h = box
+    w = h * LOGO_W / LOGO_H
+    return (f'  <image href="data:image/png;base64,{_LOGO}" '
+            f'x="{x + (box - w) / 2:.2f}" y="{y:.2f}" width="{w:.2f}" height="{h:.2f}" '
+            f'preserveAspectRatio="xMidYMid meet"/>')
+
 
 def modules(skip=None):
     """QR modules as rects; `skip` is a module-space box left empty for the logo."""
@@ -49,9 +51,9 @@ KN = 9                                     # knockout, in modules (~7% of area)
 lo, hi = (n - KN)//2, (n - KN)//2 + KN - 1
 kx = (lo + BORDER) * M
 ksz = KN * M
-sh_scale = (ksz * 0.80) / 152
-sh_x = kx + (ksz - 120 * sh_scale) / 2
-sh_y = kx + (ksz - 152 * sh_scale) / 2
+sh_box = ksz * 0.92
+sh_x = kx + (ksz - sh_box) / 2
+sh_y = kx + (ksz - sh_box) / 2
 
 open("brand/qr/bossbrothershauling-qr-shield.svg", "w").write(f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {side} {side}" width="{side}" height="{side}" role="img" aria-label="QR code for bossbrothershauling.com">
   <defs>
@@ -61,7 +63,7 @@ open("brand/qr/bossbrothershauling-qr-shield.svg", "w").write(f'''<svg xmlns="ht
   <g fill="#000000" shape-rendering="crispEdges">
     {modules(skip=(lo, hi, lo, hi))}
   </g>
-{shield(sh_x, sh_y, sh_scale)}
+{shield(sh_x, sh_y, sh_box)}
 </svg>
 ''')
 
@@ -88,7 +90,7 @@ open("brand/qr/bossbrothershauling-qr-truck-panel.svg", "w").write(f'''<svg xmln
     <g fill="#000000" shape-rendering="crispEdges">
       {modules(skip=(lo, hi, lo, hi))}
     </g>
-{shield(sh_x, sh_y, sh_scale)}
+{shield(sh_x, sh_y, sh_box)}
   </g>
   <g text-anchor="middle" font-family="Cinzel, Georgia, 'Times New Roman', serif">
     <text x="{W/2}" y="{top + tile + 88}" fill="#FFFFFF" font-size="50" font-weight="700"

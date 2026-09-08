@@ -187,32 +187,15 @@ function HeroTruck({ drop }: { drop?: ReturnType<typeof useSpring> }) {
       {/* bed/cab seam + headlight */}
       <rect x="409" y="204" width="2" height="46" fill="#3A3A40" opacity="0.8" />
       <rect x="497" y="216" width="6" height="9" rx="2" fill="#FBF0C9" />
-      {/* shield emblem on the door, as it sits on the real truck */}
-      <g transform="translate(340 206) scale(0.26)">
-        <path
-          d="M26 37 L20 9 L38 23 L60 5 L82 23 L100 9 L94 37 Z"
-          fill="url(#goldTrim)"
-        />
-        <path
-          d="M12 38 H108 V84 C108 112 88 134 60 148 C32 134 12 112 12 84 Z"
-          fill="#0A0A0B"
-          stroke="url(#goldTrim)"
-          strokeWidth="9"
-          strokeLinejoin="round"
-        />
-        <text
-          x="60"
-          y="112"
-          textAnchor="middle"
-          fill="url(#goldTrim)"
-          fontFamily="var(--font-cinzel), Georgia, serif"
-          fontSize="66"
-          fontWeight="700"
-          letterSpacing="-9"
-        >
-          BB
-        </text>
-      </g>
+      {/* the real shield on the door, as it sits on the actual truck */}
+      <image
+        href="/logo-mark.png"
+        x="336"
+        y="206"
+        width="31"
+        height="42"
+        preserveAspectRatio="xMidYMid meet"
+      />
 
       {/* wheels — trailer axle, truck rear + front */}
       <Wheel cx={168} cy={286} />
