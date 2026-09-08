@@ -100,18 +100,41 @@ export function BossShield({
 }
 
 const SIZES = {
-  sm: { shield: "h-10 w-auto", boss: "text-lg", sub: "text-[0.6rem]", rule: "min-w-2" },
-  md: { shield: "h-14 w-auto", boss: "text-2xl", sub: "text-[0.7rem]", rule: "min-w-3" },
-  lg: { shield: "h-24 w-auto", boss: "text-4xl", sub: "text-xs", rule: "min-w-5" },
+  sm: {
+    shield: "h-10 w-auto",
+    gap: "gap-5",
+    boss: "text-lg",
+    sub: "text-[0.6rem]",
+    dash: "w-2",
+    hang: "mr-1.5",
+  },
+  md: {
+    shield: "h-14 w-auto",
+    gap: "gap-6",
+    boss: "text-2xl",
+    sub: "text-[0.7rem]",
+    dash: "w-3",
+    hang: "mr-1.5",
+  },
+  lg: {
+    shield: "h-24 w-auto",
+    gap: "gap-8",
+    boss: "text-4xl",
+    sub: "text-xs",
+    dash: "w-4",
+    hang: "mr-2",
+  },
 } as const;
 
 /**
  * Full brand lockup: shield beside the stacked BOSS / BROTHERS / HAULING type.
  *
- * All three lines start on the same left edge — the rule after HAULING flexes
- * to fill the block instead of a leading dash indenting the H. The negative
- * right margins cancel the trailing space letter-spacing leaves after the last
- * character, so the right edge lines up too.
+ * The wrap flanks HAULING with a dash on each side, but a dash sitting in the
+ * line would indent the H past the B of BOSS and BROTHERS. So the leading dash
+ * hangs outside the text block (absolute, right-full) — it prints in the gap
+ * beside the shield, which the per-size `gap` reserves room for, and the three
+ * lines still start on one left edge. The negative right margins cancel the
+ * trailing space letter-spacing leaves after each line's last character.
  */
 export function BossLogo({
   size = "sm",
@@ -122,9 +145,9 @@ export function BossLogo({
 }) {
   const s = SIZES[size];
   return (
-    <span className={`flex items-center gap-3 ${className ?? ""}`}>
+    <span className={`flex items-center ${s.gap} ${className ?? ""}`}>
       <BossShield className={s.shield} />
-      <span className="flex flex-col items-stretch leading-none">
+      <span className="flex flex-col items-start leading-none">
         <span
           className={`font-brand font-bold uppercase tracking-[0.14em] [margin-right:-0.14em] text-bone ${s.boss}`}
         >
@@ -136,10 +159,14 @@ export function BossLogo({
           Brothers
         </span>
         <span
-          className={`mt-1 flex items-center gap-1.5 font-brand uppercase text-bone/90 ${s.sub}`}
+          className={`relative mt-1 flex items-center gap-1.5 font-brand uppercase text-bone/90 ${s.sub}`}
         >
+          <i
+            aria-hidden
+            className={`absolute right-full h-px bg-gold-500 ${s.dash} ${s.hang}`}
+          />
           <span className="tracking-[0.3em] [margin-right:-0.3em]">Hauling</span>
-          <i aria-hidden className={`h-px flex-1 bg-gold-500 ${s.rule}`} />
+          <i aria-hidden className={`h-px bg-gold-500 ${s.dash}`} />
         </span>
       </span>
     </span>
