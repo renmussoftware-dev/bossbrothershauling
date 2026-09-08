@@ -100,12 +100,19 @@ export function BossShield({
 }
 
 const SIZES = {
-  sm: { shield: "h-10 w-auto", boss: "text-lg", sub: "text-[0.6rem]", rule: "w-4" },
-  md: { shield: "h-14 w-auto", boss: "text-2xl", sub: "text-[0.7rem]", rule: "w-6" },
-  lg: { shield: "h-24 w-auto", boss: "text-4xl", sub: "text-xs", rule: "w-10" },
+  sm: { shield: "h-10 w-auto", boss: "text-lg", sub: "text-[0.6rem]", rule: "min-w-2" },
+  md: { shield: "h-14 w-auto", boss: "text-2xl", sub: "text-[0.7rem]", rule: "min-w-3" },
+  lg: { shield: "h-24 w-auto", boss: "text-4xl", sub: "text-xs", rule: "min-w-5" },
 } as const;
 
-/** Full brand lockup: shield beside the stacked BOSS / BROTHERS / HAULING type. */
+/**
+ * Full brand lockup: shield beside the stacked BOSS / BROTHERS / HAULING type.
+ *
+ * All three lines start on the same left edge — the rule after HAULING flexes
+ * to fill the block instead of a leading dash indenting the H. The negative
+ * right margins cancel the trailing space letter-spacing leaves after the last
+ * character, so the right edge lines up too.
+ */
 export function BossLogo({
   size = "sm",
   className,
@@ -117,23 +124,22 @@ export function BossLogo({
   return (
     <span className={`flex items-center gap-3 ${className ?? ""}`}>
       <BossShield className={s.shield} />
-      <span className="flex flex-col leading-none">
+      <span className="flex flex-col items-stretch leading-none">
         <span
-          className={`font-brand font-bold uppercase tracking-[0.14em] text-bone ${s.boss}`}
+          className={`font-brand font-bold uppercase tracking-[0.14em] [margin-right:-0.14em] text-bone ${s.boss}`}
         >
           Boss
         </span>
         <span
-          className={`mt-0.5 bg-gold-sheen bg-clip-text font-brand font-semibold uppercase tracking-[0.22em] text-transparent ${s.sub}`}
+          className={`mt-0.5 bg-gold-sheen bg-clip-text font-brand font-semibold uppercase tracking-[0.22em] [margin-right:-0.22em] text-transparent ${s.sub}`}
         >
           Brothers
         </span>
         <span
-          className={`mt-1 flex items-center gap-1.5 font-brand uppercase tracking-[0.3em] text-bone/90 ${s.sub}`}
+          className={`mt-1 flex items-center gap-1.5 font-brand uppercase text-bone/90 ${s.sub}`}
         >
-          <i aria-hidden className={`h-px bg-gold-500 ${s.rule}`} />
-          Hauling
-          <i aria-hidden className={`h-px bg-gold-500 ${s.rule}`} />
+          <span className="tracking-[0.3em] [margin-right:-0.3em]">Hauling</span>
+          <i aria-hidden className={`h-px flex-1 bg-gold-500 ${s.rule}`} />
         </span>
       </span>
     </span>
