@@ -6,14 +6,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 import { leadSchema, type LeadFormValues, timeframeOptions } from "@/lib/schema";
-import { calculateEstimate, formatEstimateRange } from "@/lib/pricing";
 import { submitLead } from "@/lib/submitLead";
 import { matchTripZone } from "@/lib/tripZones";
-import type { EstimateInput, LoadCategory } from "@/lib/types";
+import type { LoadCategory } from "@/lib/types";
 import { DumpBed, type JunkIcon } from "./DumpBed";
-import { CATEGORY_OPTIONS, LOAD_SIZE_OPTIONS } from "./loadOptions";
+import { CATEGORY_OPTIONS } from "./loadOptions";
 
-const STEPS = ["Your load", "Load size", "Your estimate", "Book it"] as const;
+// ===========================================================================
+// QUOTE REQUEST — three steps: what you've got → photos of it → how to reach
+// you. The site deliberately shows NO dollar figures anywhere: photos come to
+// us and one of the brothers calls back with an exact price. Nothing in here
+// computes, formats, or displays money.
+// ===========================================================================
+
+const STEPS = ["Your load", "Photos", "Contact & pickup"] as const;
 
 const MAX_PHOTOS = 8;
 const MAX_PHOTO_MB = 10;
@@ -22,6 +28,8 @@ export function Estimator() {
   const reduce = useReducedMotion();
   const [step, setStep] = useState(0);
   const [photos, setPhotos] = useState<File[]>([]);
+  const [photoNote, setPhotoNote] = useState("");
+  const [dragging, setDragging] = useState(false);
   const controlsRef = useRef<HTMLDivElement>(null);
   const prevStep = useRef(0);
   const [submitState, setSubmitState] = useState<
@@ -49,18 +57,18 @@ export function Estimator() {
     },
   });
 
-  // --- Watched values feed the live estimate + the dump-bed visual ---
+  // --- Watched values feed the dump-bed visual + the lead payload ---
   const categories = (watch("categories") ?? []) as LoadCategory[];
   const regularTires = Number(watch("regularTires")) || 0;
   const largeTires = Number(watch("largeTires")) || 0;
   const mattresses = Number(watch("mattresses")) || 0;
   const oversized = !!watch("oversized");
   const otherText = watch("otherText") ?? "";
-  const loadSize = watch("loadSize");
   const address = watch("address") ?? "";
 
-  // Zone-based travel fee from a static zip/city lookup — no distance API.
-  // Matching is instant, so the estimate updates live as the address is typed.
+  // Zone lookup from a static zip/city list — no distance API. Used to confirm
+  // to the customer that they're in range, and to brief the call-back; the fee
+  // it carries is business-side only and never rendered.
   const tripMatch = useMemo(() => matchTripZone(address), [address]);
 
   const hasSomething =
@@ -96,28 +104,14 @@ export function Estimator() {
     return list;
   }, [categories, regularTires, largeTires, mattresses]);
 
-  // Live estimate (only meaningful once a load size is picked)
-  const estimate = useMemo(() => {
-    if (!loadSize) return null;
-    const input: EstimateInput = {
-      categories,
-      regularTires,
-      largeTires,
-      mattresses,
-      oversized,
-      loadSize,
-      tripFee: tripMatch?.fee ?? 0,
-    };
-    return calculateEstimate(input);
-  }, [categories, regularTires, largeTires, mattresses, oversized, loadSize, tripMatch]);
-
   // --- Step navigation with per-step gating ---
   async function next() {
     if (step === 0 && !hasSomething) {
-      await trigger("categories"); // surfaces the "add at least one item" error
+      await trigger("categories"); // surfaces the "tell us what you've got" error
       return;
     }
-    if (step === 1 && !loadSize) return;
+    // Photos (step 1) are encouraged, never required — some people are asking
+    // from a desk, nowhere near the pile.
     setStep((s) => Math.min(s + 1, STEPS.length - 1));
   }
   function back() {
@@ -133,12 +127,29 @@ export function Estimator() {
   // --- Photos ---
   function addPhotos(files: FileList | null) {
     if (!files) return;
-    const incoming = Array.from(files).filter(
+    const all = Array.from(files);
+    const incoming = all.filter(
       (f) => f.type.startsWith("image/") && f.size <= MAX_PHOTO_MB * 1024 * 1024,
     );
-    setPhotos((prev) => [...prev, ...incoming].slice(0, MAX_PHOTOS));
+    setPhotos((prev) => {
+      const merged = [...prev, ...incoming].slice(0, MAX_PHOTOS);
+      // Say why a file didn't make it, instead of dropping it silently.
+      const notes: string[] = [];
+      const rejected = all.length - incoming.length;
+      if (rejected > 0) {
+        notes.push(
+          `${rejected} file${rejected > 1 ? "s" : ""} skipped — photos only, up to ${MAX_PHOTO_MB} MB each.`,
+        );
+      }
+      if (prev.length + incoming.length > MAX_PHOTOS) {
+        notes.push(`We keep the first ${MAX_PHOTOS} photos.`);
+      }
+      setPhotoNote(notes.join(" "));
+      return merged;
+    });
   }
   function removePhoto(idx: number) {
+    setPhotoNote("");
     setPhotos((prev) => prev.filter((_, i) => i !== idx));
   }
 
@@ -152,8 +163,6 @@ export function Estimator() {
       const parsed = leadSchema.parse(data);
       const outcome = await submitLead({
         lead: parsed,
-        estimateLow: estimate?.low ?? null,
-        estimateHigh: estimate?.high ?? null,
         tripZone: tripMatch,
         photos,
       });
@@ -166,7 +175,6 @@ export function Estimator() {
   if (submitState === "done" || submitState === "done-mailto") {
     return (
       <Confirmation
-        estimate={estimate}
         viaMailto={submitState === "done-mailto"}
         hadPhotos={photos.length > 0}
       />
@@ -178,13 +186,9 @@ export function Estimator() {
       <div className="grid gap-0 lg:grid-cols-[1.05fr_1fr]">
         {/* ---------- Visual / dump bed side ---------- */}
         <div className="relative border-b border-white/5 bg-onyx-2/60 p-6 sm:p-8 lg:border-b-0 lg:border-r">
-          <p className="label-kicker">Build your load</p>
-          <DumpBed
-            loadSize={loadSize ?? null}
-            items={bedItems}
-            className="mx-auto mt-4 w-full max-w-md"
-          />
-          <LiveEstimate estimate={estimate} loadSize={loadSize} />
+          <p className="label-kicker">Your load</p>
+          <DumpBed items={bedItems} className="mx-auto mt-4 w-full max-w-md" />
+          <WhatHappensNext photoCount={photos.length} />
         </div>
 
         {/* ---------- Controls side ---------- */}
@@ -305,99 +309,113 @@ export function Estimator() {
                   </fieldset>
                 )}
 
-                {/* ===== STEP 1 — LOAD SIZE ===== */}
+                {/* ===== STEP 1 — PHOTOS ===== */}
                 {step === 1 && (
-                  <fieldset className="space-y-4">
-                    <legend className="font-display text-2xl text-bone">
-                      How big is the pile?
-                    </legend>
-                    <p className="text-sm text-ash">
-                      Pick the closest fit — watch the bed fill up. We confirm the
-                      exact size on-site.
-                    </p>
-                    <div className="grid gap-3">
-                      {LOAD_SIZE_OPTIONS.map((opt) => {
-                        const active = loadSize === opt.value;
-                        return (
-                          <button
-                            type="button"
-                            key={opt.value}
-                            onClick={() =>
-                              setValue("loadSize", opt.value, {
-                                shouldValidate: true,
-                              })
-                            }
-                            aria-pressed={active}
-                            className={`flex items-center justify-between rounded-xl border p-4 text-left transition ${
-                              active
-                                ? "border-gold-500 bg-gold-500/10"
-                                : "border-white/10 bg-char-2/40 hover:border-white/25"
-                            }`}
-                          >
-                            <span>
-                              <span className="block font-display text-lg text-bone">
-                                {opt.label}
-                              </span>
-                              <span className="mt-1 block text-sm text-ash">
-                                {opt.blurb}
-                              </span>
-                            </span>
-                            <span
-                              aria-hidden
-                              className={`ml-3 h-5 w-5 shrink-0 rounded-full border-2 ${
-                                active
-                                  ? "border-gold-500 bg-gold-500"
-                                  : "border-white/30"
-                              }`}
-                            />
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </fieldset>
-                )}
-
-                {/* ===== STEP 2 — ESTIMATE REVEAL ===== */}
-                {step === 2 && estimate && (
                   <div className="space-y-5">
                     <h3 className="font-display text-2xl text-bone">
-                      Your estimate
+                      Show us the pile
                     </h3>
-                    <div className="rounded-2xl border border-gold-300/40 bg-onyx-2 p-6 text-center">
-                      <p className="label-kicker">Estimated range</p>
-                      <p className="mt-2 font-display text-5xl font-bold tabular-nums text-gold-300">
-                        {formatEstimateRange(estimate)}
+                    <p className="text-sm text-ash">
+                      A couple of quick pictures tell us more than any form can.
+                      We look at them, then call you with an exact price — no
+                      guessing, no surprise charges on pickup day.
+                    </p>
+
+                    <div
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        setDragging(true);
+                      }}
+                      onDragLeave={() => setDragging(false)}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        setDragging(false);
+                        addPhotos(e.dataTransfer.files);
+                      }}
+                      className={`rounded-2xl border-2 border-dashed p-6 text-center transition ${
+                        dragging
+                          ? "border-gold-500 bg-gold-500/10"
+                          : "border-gold-300/40 bg-gold-300/5"
+                      }`}
+                    >
+                      <CameraGlyph />
+                      <p className="mt-3 font-display text-lg text-bone">
+                        Add photos of what you need gone
                       </p>
                       <p className="mt-1 text-sm text-ash">
-                        for a {estimate.loadSizeLabel.toLowerCase()}
+                        Up to {MAX_PHOTOS} photos, {MAX_PHOTO_MB} MB each. Drag
+                        them here, or use the button — on a phone you can shoot
+                        one right now.
                       </p>
-                    </div>
-                    <div className="rounded-xl border border-white/10 bg-char-2/40 p-4 text-sm text-ash">
-                      <p className="font-semibold text-bone">
-                        Why a range, not one number?
-                      </p>
-                      <p className="mt-1">
-                        Your final price comes from the actual weight of your load
-                        at the landfill scale — it can&rsquo;t be guessed exactly
-                        from a form. We lock in your price on-site, or from photos
-                        you send, before we haul a thing.
-                      </p>
-                      {estimate.hasSpecialHandling && (
-                        <p className="mt-2 text-gold-300">
-                          Heads up: mattresses and oversized items carry a
-                          special-handling fee at the dump — that&rsquo;s baked
-                          into this range.
+                      <label className="btn-primary mt-4 cursor-pointer">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          className="sr-only"
+                          onChange={(e) => {
+                            addPhotos(e.target.files);
+                            e.target.value = ""; // let the same file re-add
+                          }}
+                        />
+                        {photos.length > 0 ? "Add more photos" : "Choose photos"}
+                      </label>
+
+                      {photos.length > 0 && (
+                        <ul className="mt-5 flex flex-wrap justify-center gap-2">
+                          {photos.map((f, i) => (
+                            <li key={`${f.name}-${i}`}>
+                              <PhotoThumb
+                                file={f}
+                                onRemove={() => removePhoto(i)}
+                              />
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+
+                      {photos.length > 0 && (
+                        <p className="mt-3 text-sm text-gold-300" role="status">
+                          {photos.length} photo{photos.length > 1 ? "s" : ""}{" "}
+                          ready to send
+                        </p>
+                      )}
+                      {photoNote && (
+                        <p className="mt-2 text-sm text-alert" role="status">
+                          {photoNote}
                         </p>
                       )}
                     </div>
-                    <p className="text-xs text-ash/80">
-                      This is an estimate, not a final or guaranteed price.
+
+                    <div className="rounded-xl border border-white/10 bg-char-2/40 p-4">
+                      <p className="font-display text-lg text-bone">
+                        What helps us most
+                      </p>
+                      <ul className="mt-2 space-y-1.5 text-sm text-ash">
+                        {[
+                          "One wide shot with the whole pile in frame.",
+                          "A close-up of anything heavy or awkward — appliances, a hot tub, a piano.",
+                          "The spot the truck would back into, if it's tight.",
+                        ].map((tip) => (
+                          <li key={tip} className="flex gap-2">
+                            <span aria-hidden className="text-gold-300">
+                              •
+                            </span>
+                            {tip}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <p className="text-sm text-ash">
+                      No photos handy? Skip this step — we&rsquo;ll ask a few
+                      questions when we call you back.
                     </p>
                   </div>
                 )}
 
-                {/* ===== STEP 3 — CONTACT + SUBMIT ===== */}
-                {step === 3 && (
+                {/* ===== STEP 2 — CONTACT + SUBMIT ===== */}
+                {step === 2 && (
                   <div className="space-y-4">
                     <h3 className="font-display text-2xl text-bone">
                       Where are we hauling from?
@@ -449,7 +467,7 @@ export function Estimator() {
                           role="status"
                         >
                           <span aria-hidden>✓</span> {tripMatch.place} — in our
-                          service area. Travel&rsquo;s built into your estimate.
+                          service area.
                         </span>
                       )}
                     </Field>
@@ -474,39 +492,26 @@ export function Estimator() {
                       </select>
                     </Field>
 
-                    {/* Photo upload — optional but strongly encouraged */}
-                    <div className="rounded-xl border border-dashed border-gold-300/40 bg-gold-300/5 p-4">
-                      <p className="font-display text-lg text-bone">
-                        Add photos{" "}
-                        <span className="text-sm font-normal text-gold-300">
-                          (optional, but the #1 way to lock in an accurate price)
-                        </span>
-                      </p>
-                      <p className="mt-1 text-sm text-ash">
-                        A couple of quick pics of the pile tells us way more than
-                        any form can.
-                      </p>
-                      <label className="btn-secondary mt-3 cursor-pointer">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          className="sr-only"
-                          onChange={(e) => addPhotos(e.target.files)}
-                        />
-                        Choose photos
-                      </label>
-                      {photos.length > 0 && (
-                        <ul className="mt-3 flex flex-wrap gap-2">
-                          {photos.map((f, i) => (
-                            <li key={i}>
-                              <PhotoThumb
-                                file={f}
-                                onRemove={() => removePhoto(i)}
-                              />
-                            </li>
-                          ))}
-                        </ul>
+                    <div className="rounded-xl border border-white/10 bg-char-2/40 p-4 text-sm">
+                      {photos.length > 0 ? (
+                        <p className="text-ash">
+                          <span className="font-display text-base text-gold-300">
+                            {photos.length} photo{photos.length > 1 ? "s" : ""}
+                          </span>{" "}
+                          will be sent with your request.
+                        </p>
+                      ) : (
+                        <p className="text-ash">
+                          No photos attached yet.{" "}
+                          <button
+                            type="button"
+                            onClick={() => setStep(1)}
+                            className="text-gold-300 underline underline-offset-2"
+                          >
+                            Add a couple
+                          </button>{" "}
+                          — it&rsquo;s the fastest way to an accurate quote.
+                        </p>
                       )}
                     </div>
 
@@ -536,17 +541,6 @@ export function Estimator() {
                       )}
                     </div>
 
-                    {estimate && (
-                      <div className="rounded-xl bg-char-2/50 p-3 text-center text-sm text-ash">
-                        Your estimate:{" "}
-                        <span className="font-display text-base text-gold-300">
-                          {formatEstimateRange(estimate)}
-                        </span>{" "}
-                        · {estimate.loadSizeLabel}
-                        {tripMatch && <> · travel to {tripMatch.place} included</>}
-                      </div>
-                    )}
-
                     {submitState === "error" && (
                       <p className="text-sm text-alert">
                         Something went wrong sending that. Give us a call and
@@ -569,13 +563,8 @@ export function Estimator() {
               )}
 
               {step < STEPS.length - 1 ? (
-                <button
-                  type="button"
-                  onClick={next}
-                  className="btn-primary"
-                  disabled={step === 1 && !loadSize}
-                >
-                  {step === 2 ? "Looks good — book it" : "Continue"}
+                <button type="button" onClick={next} className="btn-primary">
+                  {step === 1 && photos.length === 0 ? "Skip for now" : "Continue"}
                 </button>
               ) : (
                 <button
@@ -583,7 +572,9 @@ export function Estimator() {
                   className="btn-primary"
                   disabled={submitState === "submitting"}
                 >
-                  {submitState === "submitting" ? "Sending…" : "Get my quote"}
+                  {submitState === "submitting"
+                    ? "Sending…"
+                    : "Send my request"}
                 </button>
               )}
             </div>
@@ -633,33 +624,55 @@ function StepHeader({ step }: { step: number }) {
   );
 }
 
-function LiveEstimate({
-  estimate,
-  loadSize,
-}: {
-  estimate: ReturnType<typeof calculateEstimate> | null;
-  loadSize: string | undefined;
-}) {
+/** Replaces the old live-estimate readout: how the quote actually happens. */
+function WhatHappensNext({ photoCount }: { photoCount: number }) {
+  const steps = [
+    "Send us your list and a few photos.",
+    "One of the brothers looks them over.",
+    "We call you with an exact price — before we haul anything.",
+  ];
   return (
-    <div className="mt-6 rounded-xl border border-white/10 bg-onyx/70 p-4 text-center">
-      {estimate ? (
-        <>
-          <p className="label-kicker">Live estimate</p>
-          <p className="font-display text-3xl font-bold tabular-nums text-gold-300">
-            {formatEstimateRange(estimate)}
-          </p>
-          <p className="text-xs text-ash">
-            Estimate only — final price confirmed on-site.
-          </p>
-        </>
-      ) : (
-        <p className="text-sm text-ash">
-          {loadSize
-            ? "Calculating…"
-            : "Pick a load size to see your estimate."}
-        </p>
-      )}
+    <div className="mt-6 rounded-xl border border-white/10 bg-onyx/70 p-4">
+      <p className="label-kicker">What happens next</p>
+      <ol className="mt-3 space-y-2.5">
+        {steps.map((label, i) => (
+          <li key={label} className="flex gap-3 text-sm text-ash">
+            <span
+              aria-hidden
+              className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-char-2 font-display text-xs text-gold-300"
+            >
+              {i + 1}
+            </span>
+            {label}
+          </li>
+        ))}
+      </ol>
+      <p className="mt-3 border-t border-white/5 pt-3 text-xs text-ash/80">
+        {photoCount > 0
+          ? `${photoCount} photo${photoCount > 1 ? "s" : ""} attached — that's what we quote from.`
+          : "No online guesses and no surprise charges: your price comes from a real person, on a real call."}
+      </p>
     </div>
+  );
+}
+
+/** Camera mark for the photo drop zone. */
+function CameraGlyph() {
+  return (
+    <svg
+      width="44"
+      height="44"
+      viewBox="0 0 24 24"
+      className="mx-auto"
+      aria-hidden
+      fill="none"
+      stroke="#D4A537"
+      strokeWidth="1.4"
+      strokeLinejoin="round"
+    >
+      <path d="M3 8.5h3.2l1.4-2.2h8.8l1.4 2.2H21v10H3z" />
+      <circle cx="12" cy="13.2" r="3.6" />
+    </svg>
   );
 }
 
@@ -748,11 +761,9 @@ function PhotoThumb({ file, onRemove }: { file: File; onRemove: () => void }) {
 }
 
 function Confirmation({
-  estimate,
   viaMailto,
   hadPhotos,
 }: {
-  estimate: ReturnType<typeof calculateEstimate> | null;
   viaMailto: boolean;
   hadPhotos: boolean;
 }) {
@@ -780,34 +791,25 @@ function Confirmation({
       <p className="mx-auto mt-3 max-w-md text-ash">
         {viaMailto ? (
           <>
-            Your email app just opened with your quote request filled in.
+            Your email app just opened with your request filled in.
             {hadPhotos && (
               <> Don&rsquo;t forget to attach your photos before sending —
-              they&rsquo;re the fastest way to a firm price.</>
+              they&rsquo;re what we quote from.</>
             )}{" "}
-            Once it&rsquo;s sent, one of the brothers will get back to you with a
-            confirmed price and pickup window.
+            Once it&rsquo;s sent, one of the brothers will call you with your
+            price and a pickup window.
           </>
         ) : (
           <>
-            One of the brothers will confirm your price and pickup window within
-            a few hours (same day for morning requests). Keep an eye on your
-            phone.
+            One of the brothers will look at what you sent and call you with
+            your price and a pickup window — usually within a few hours, same
+            day for morning requests. Keep an eye on your phone.
           </>
         )}
       </p>
-      {estimate && (
-        <p className="mt-5 inline-block rounded-xl bg-char-2/60 px-5 py-3">
-          <span className="label-kicker">Your estimate</span>
-          <br />
-          <span className="font-display text-2xl text-gold-300">
-            {formatEstimateRange(estimate)}
-          </span>
-        </p>
-      )}
       <p className="mx-auto mt-6 max-w-sm text-xs text-ash/80">
-        Reminder: this is an estimate. Your exact price is confirmed from the
-        landfill weight before we haul anything.
+        You&rsquo;ll hear the price from us directly, and you can say no — there
+        is nothing to pay and nothing to sign until you agree to it.
       </p>
       <p className="mx-auto mt-2 max-w-sm text-xs text-ash/80">
         Before we arrive, have everything pulled out and piled where the truck

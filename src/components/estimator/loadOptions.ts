@@ -1,4 +1,4 @@
-import type { LoadCategory, LoadSize } from "@/lib/types";
+import type { LoadCategory } from "@/lib/types";
 import type { JunkIcon } from "./DumpBed";
 
 // Customer-side copy for each bulk category. Labels are written from the
@@ -32,27 +32,5 @@ export const CATEGORY_OPTIONS: {
     icon: "construction",
     label: "Construction & demo debris",
     hint: "Shingles, wood, drywall, remodel leftovers",
-  },
-];
-
-export const LOAD_SIZE_OPTIONS: {
-  value: LoadSize;
-  label: string;
-  blurb: string;
-}[] = [
-  {
-    value: "quarter",
-    label: "Quarter load",
-    blurb: "A few items — think a small pickup bed corner.",
-  },
-  {
-    value: "half",
-    label: "Half load",
-    blurb: "A room's worth, or half the truck bed.",
-  },
-  {
-    value: "full",
-    label: "Full truck load",
-    blurb: "The whole bed, piled up. Big cleanouts.",
   },
 ];

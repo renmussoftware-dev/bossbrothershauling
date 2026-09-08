@@ -1,12 +1,15 @@
-# Boss Brothers Hauling — Website & Pricing Estimator
+# Boss Brothers Hauling — Website & Quote Request
 
-Marketing site with an embedded, multi-step pricing estimator + lead intake for
+Marketing site with an embedded, multi-step quote-request form for
 **Boss Brothers Hauling**, a junk-removal & hauling service in Santa Rosa County, FL.
 
 Built with **Next.js (App Router) + TypeScript + Tailwind CSS**, with
 **Framer Motion** for the 3D-feel motion, **React Hook Form + Zod** for the form.
-The estimator is a **deterministic calculator** (no AI, no fake instant quote) —
-it produces an honest estimate *range*, never a guaranteed price.
+
+**The site shows the customer no dollar figures — anywhere.** They tell us what
+they've got, send photos of the pile, and one of the brothers calls back with an
+exact price. There is no online estimate, no price range, and no load-size guess
+for the customer to make.
 
 ---
 
@@ -62,11 +65,11 @@ src/
     Logo.tsx              # crowned-shield mark + BOSS/BROTHERS/HAULING lockup
     EstimatorSection.tsx
     estimator/
-      Estimator.tsx       # the multi-step tool (load → size → estimate → book)
-      DumpBed.tsx         # signature 3D-feel dump bed that fills as you build
-      loadOptions.ts      # customer-facing category/size copy
+      Estimator.tsx       # the quote request (load → photos → contact)
+      DumpBed.tsx         # signature 3D-feel bed, fills as items are listed
+      loadOptions.ts      # customer-facing category copy
   lib/
-    pricing.ts            # ★ PRICING ENGINE — all rates & margins live here
+    pricing.ts            # ★ internal rate card — NOT used by the site
     schema.ts             # Zod validation for the intake form
     submitLead.ts         # client-side lead delivery (endpoint or mailto fallback)
     types.ts              # shared domain types
@@ -78,9 +81,11 @@ docs/                     # ← the published site (GitHub Pages serves this)
 
 ---
 
-## ★ How to update landfill rates & pricing
+## ★ Internal rate card (not shown on the site)
 
 **All pricing lives in one place: [`src/lib/pricing.ts`](src/lib/pricing.ts).**
+Nothing on the website reads it — it's the crew's reference for working out a
+price before calling a customer back.
 When the Santa Rosa County Central Landfill publishes a new rate sheet, or you
 want to change your margins, edit the `PRICING` constant — nothing else needs to
 change.
@@ -97,10 +102,12 @@ Key values:
 | `serviceMinimumLow` | Smallest low-end price you'll ever advertise |
 | `roundTo` | Rounds the displayed range to the nearest $5 |
 
-**Important — what the customer never sees:** the markup multiplier and the raw
-landfill/dump cost are used only inside `calculateEstimate()` and are never
-returned to the browser or rendered. The customer only ever sees the final
-rounded **estimate range**. Keep it that way when editing.
+**Important — the customer sees none of this.** Since the photo-quote redesign
+the website imports nothing from `pricing.ts`: no rate, no markup, no range, no
+figure of any kind reaches the browser. The file remains as the crew's own rate
+card for working out a price before the call-back. If you ever wire it into the
+customer-facing site again, that decision reverses the "no prices online" rule
+the rest of the site is built on — make it deliberately.
 
 The calculation is thoroughly commented in `pricing.ts` if you want to tune the
 formula itself (rates → tonnage → fees → markup → trip fee → rounded range).
@@ -110,16 +117,15 @@ formula itself (rates → tonnage → fees → markup → trip fee → rounded r
 [`src/lib/tripZones.ts`](src/lib/tripZones.ts) maps the customer's address to a
 travel-fee tier using a **static zip/city lookup table** — no distance API, no
 per-request cost. When the customer types their pickup address, the site
-matches the zip (or city name) and folds the zone's flat fee into the estimate
-range, showing a "✓ Navarre — in our service area" confirmation.
+matches the zip (or city name) and shows a "✓ Navarre — in our service area"
+confirmation. The zone's flat fee is **not** shown to the customer; it rides
+along in the lead so whoever calls back knows the travel cost.
 
 - Fees per zone: `TRIP_ZONES` (`home` $0 / `county` $25 / `extended` $50)
 - Which zips/towns land in which zone: `ZIP_TO_ZONE` and `CITY_TO_ZONE`
-- Unrecognized addresses get **no fee** (stay conservative; you confirm price
-  on the call anyway — the lead email flags these as "unrecognized")
-- The fee is added **after** the markup multiplier (a trip costs the same
-  drive time regardless of load value), and like everything else it's never
-  itemized to the customer — it's just part of the range.
+- Unrecognized addresses get **no fee** (stay conservative; you quote on the
+  call anyway — the lead email flags these as "unrecognized")
+- The fee appears only in the lead sent to the business, never in the browser.
 
 ---
 
@@ -179,7 +185,9 @@ Search the codebase for `PLACEHOLDER` and update these:
 - **Type:** Cinzel (engraved serif) for the wordmark and top-level headings,
   Oswald for working headings and UI labels, Inter for body copy.
 - **Signature element:** the dimensional **dump bed** (`DumpBed.tsx`) fills as
-  the customer builds their load and item glyphs surface at the load line.
+  the customer names what they've got and item glyphs surface at the load line.
+  It is decorative acknowledgement, not a measurement — nothing it shows feeds
+  a price.
 - **Performance:** the "3D feel" is layered SVG + Framer Motion (no heavy 3D
   library), so it stays fast on the phone-heavy ad traffic this site targets.
 - **Accessibility:** visible keyboard focus states, `aria` labels on the
@@ -187,6 +195,7 @@ Search the codebase for `PLACEHOLDER` and update these:
 
 ## What this does **not** do
 
-- No payment processing — it estimates and captures leads only.
+- No payment processing — it captures leads only.
 - No accounts / auth.
-- No AI-generated quote — the estimate is deterministic from `pricing.ts`.
+- **No prices shown to the customer** — quoting happens on the phone, after a
+  human looks at the photos.

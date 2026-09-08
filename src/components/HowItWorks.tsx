@@ -1,13 +1,13 @@
 const STEPS = [
   {
     n: 1,
-    title: "Submit your load",
-    body: "Tell us what you've got and how big the pile is — snap a couple photos while you're at it. Takes about a minute.",
+    title: "Send us the details",
+    body: "Tell us what you've got and snap a couple photos of the pile. Takes about a minute.",
   },
   {
     n: 2,
-    title: "Get a price",
-    body: "See an honest estimate range on the spot, then we confirm your exact price from photos or on-site before we touch a thing.",
+    title: "We call you with a price",
+    body: "One of the brothers looks at your photos and calls you back with an exact price — no online guesses, no surprise charges when we show up.",
   },
   {
     n: 3,

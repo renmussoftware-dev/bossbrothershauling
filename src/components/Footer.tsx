@@ -69,7 +69,7 @@ export function Footer() {
           <p>
             © {new Date().getFullYear()} {SITE.name}. All rights reserved.
           </p>
-          <p>Estimates are not final prices — final cost is confirmed by landfill weight.</p>
+          <p>Every price is quoted by phone before we haul anything.</p>
         </div>
       </div>
     </footer>

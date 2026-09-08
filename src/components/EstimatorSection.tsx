@@ -10,14 +10,14 @@ export function EstimatorSection() {
 
       <div className="container-page">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="label-kicker">Instant estimate</p>
+          <p className="label-kicker">Free quote</p>
           <h2 className="mt-3 text-4xl font-bold sm:text-5xl">
-            Build your load. See your price.
+            Show us the pile. We&rsquo;ll call with your price.
           </h2>
           <p className="mt-4 text-lg text-ash">
-            Pick what you&rsquo;ve got, choose how big the pile is, and watch the
-            bed fill up. You&rsquo;ll get an honest estimate range in seconds — no
-            phone tag required.
+            Tell us what you&rsquo;ve got, send a few photos, and one of the
+            brothers will call you back with an exact price. No online
+            guesswork, and nothing to pay until you say yes.
           </p>
         </div>
 

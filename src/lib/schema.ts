@@ -1,21 +1,19 @@
 import { z } from "zod";
 
 // ---------------------------------------------------------------------------
-// Validation for the full estimator + intake form (React Hook Form + Zod).
+// Validation for the quote-request form (React Hook Form + Zod).
 // Photos are handled as File objects in component state (not here) because the
 // browser File type doesn't round-trip through Zod cleanly.
 // ---------------------------------------------------------------------------
 
 const loadCategory = z.enum(["household", "yard", "appliances", "construction"]);
 
-const loadSize = z.enum(["quarter", "half", "full"]);
-
 export const timeframeOptions = [
   { value: "asap", label: "As soon as possible" },
   { value: "this-week", label: "This week" },
   { value: "this-weekend", label: "This weekend" },
   { value: "flexible", label: "I'm flexible" },
-  { value: "just-pricing", label: "Just getting a price for now" },
+  { value: "just-pricing", label: "Just getting a quote for now" },
 ] as const;
 
 const timeframe = z.enum([
@@ -31,7 +29,7 @@ const phoneRegex = /^[\d\s().+-]{7,20}$/;
 
 export const leadSchema = z
   .object({
-    // --- Step 1: what's in the load ---
+    // --- Step 1: what's in the load (step 2 is photos, held as File state) ---
     categories: z.array(loadCategory).default([]),
     regularTires: z.coerce.number().int().min(0).max(200).default(0),
     largeTires: z.coerce.number().int().min(0).max(200).default(0),
@@ -39,10 +37,7 @@ export const leadSchema = z
     oversized: z.boolean().default(false),
     otherText: z.string().max(500).optional().default(""),
 
-    // --- Step 2: how big ---
-    loadSize: loadSize,
-
-    // --- Step 4: contact ---
+    // --- Step 3: contact ---
     name: z.string().min(2, "Please enter your name"),
     phone: z.string().regex(phoneRegex, "Please enter a valid phone number"),
     email: z.string().email("Please enter a valid email"),
@@ -69,7 +64,8 @@ export const leadSchema = z
     if (!hasSomething) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Add at least one item to your load so we can price it.",
+        message:
+          "Tell us at least one thing you need hauled so we know what to bring.",
         path: ["categories"],
       });
     }

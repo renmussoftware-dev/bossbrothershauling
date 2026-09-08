@@ -1,15 +1,15 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import type { LoadSize } from "@/lib/types";
 
 // ===========================================================================
 // SIGNATURE ELEMENT — the dimensional dump bed that fills as you build a load.
 //
 // Drawn as a layered SVG "cutaway" box (top + side faces give the 3D depth;
-// the front face is a see-through gauge showing the load level). The fill rises
-// with the load-size selection and junk-item glyphs surface as categories are
-// added. Pure SVG + one Framer spring — light enough for mobile ad traffic.
+// the front face is a see-through gauge). The fill rises as the customer names
+// more of what they've got and junk-item glyphs surface with it. It is a
+// visual acknowledgement of the list, NOT a size measurement — nothing here
+// feeds a price. Pure SVG + one Framer spring, light enough for mobile.
 // ===========================================================================
 
 /** Icon keys that can surface above the fill line. */
@@ -24,24 +24,22 @@ export type JunkIcon =
 // Front-face interior gauge bounds (matches the box geometry below).
 const GAUGE = { x: 70, top: 118, bottom: 288, w: 300 };
 
-const FILL_PCT: Record<LoadSize | "empty", number> = {
-  empty: 0.05,
-  quarter: 0.28,
-  half: 0.52,
-  full: 0.92,
-};
+/** Fill level for a given number of listed item types — decorative only. */
+function fillFor(itemCount: number): number {
+  if (itemCount <= 0) return 0.05;
+  return Math.min(0.28 + itemCount * 0.14, 0.88);
+}
 
 export function DumpBed({
-  loadSize,
   items,
   className,
 }: {
-  loadSize: LoadSize | null;
   items: JunkIcon[];
   className?: string;
 }) {
   const reduce = useReducedMotion();
-  const pct = FILL_PCT[loadSize ?? "empty"];
+  const unique = Array.from(new Set(items));
+  const pct = fillFor(unique.length);
   const fillHeight = (GAUGE.bottom - GAUGE.top) * pct;
   const fillY = GAUGE.bottom - fillHeight;
 
@@ -50,9 +48,9 @@ export function DumpBed({
       viewBox="0 0 440 340"
       role="img"
       aria-label={
-        loadSize
-          ? `Dump bed roughly ${Math.round(pct * 100)} percent full`
-          : "Empty dump bed"
+        unique.length > 0
+          ? "Truck bed illustration holding the items you listed"
+          : "Empty truck bed illustration"
       }
       className={className}
       preserveAspectRatio="xMidYMid meet"
@@ -119,11 +117,11 @@ export function DumpBed({
           height={4}
           fill="#D4A537"
           initial={false}
-          animate={{ y: fillY - 2, opacity: loadSize ? 1 : 0.3 }}
+          animate={{ y: fillY - 2, opacity: unique.length > 0 ? 1 : 0.3 }}
           transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 120, damping: 18 }}
         />
         {/* junk glyphs surfacing near the top of the load */}
-        <JunkGlyphs items={items} surfaceY={fillY} reduce={!!reduce} />
+        <JunkGlyphs items={unique} surfaceY={fillY} reduce={!!reduce} />
       </g>
 
       {/* ---- gold-trimmed frame drawn over everything ---- */}
@@ -161,8 +159,8 @@ function JunkGlyphs({
   surfaceY: number;
   reduce: boolean;
 }) {
-  // De-dupe + cap so the pile never gets cluttered.
-  const unique = Array.from(new Set(items)).slice(0, 5);
+  // Cap so the pile never gets cluttered (items arrive de-duped).
+  const unique = items.slice(0, 5);
   const slotW = GAUGE.w / (unique.length + 1);
 
   return (

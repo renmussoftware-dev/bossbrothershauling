@@ -6,7 +6,7 @@ import { BossLogo } from "./Logo";
 
 const LINKS = [
   { href: "#services", label: "Services" },
-  { href: "#estimator", label: "Get a price" },
+  { href: "#estimator", label: "Get a quote" },
   { href: "#how", label: "How it works" },
   { href: "#area", label: "Service area" },
 ];

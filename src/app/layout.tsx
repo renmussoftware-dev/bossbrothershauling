@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     template: `%s | ${SITE.name}`,
   },
   description:
-    "Same-day junk removal, hauling & storage unit cleanouts across Santa Rosa County, FL — Milton, Pace, Navarre & Gulf Breeze. Build your load, get an instant estimate, we haul it away.",
+    "Same-day junk removal, hauling & storage unit cleanouts across Santa Rosa County, FL — Milton, Pace, Navarre & Gulf Breeze. Send us photos of what you need gone and we'll call you with a free quote.",
   keywords: [
     "junk removal",
     "hauling",
@@ -49,7 +49,8 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: `${SITE.name} — Junk Removal & Hauling`,
-    description: "Build your load, get an instant estimate, we haul it away.",
+    description:
+      "Send photos of what you need gone — we'll call you with a free quote and haul it away.",
     url: SITE.url,
     siteName: SITE.name,
     type: "website",

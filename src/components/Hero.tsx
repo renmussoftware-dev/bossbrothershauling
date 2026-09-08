@@ -45,14 +45,15 @@ export function Hero() {
             <span className="text-sheen">same day.</span>
           </h1>
           <p className="mt-5 max-w-md text-lg text-ash">
-            Two brothers, one truck, zero runaround. Build your load, get a real
-            price in under a minute, and we&rsquo;ll haul it off — furniture,
-            yard debris, appliances, storage units, or a whole cleanout.
+            Two brothers, one truck, zero runaround. Send us a couple photos of
+            what you need gone and we&rsquo;ll call you with an exact price —
+            furniture, yard debris, appliances, storage units, or a whole
+            cleanout.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <a href="#estimator" className="btn-primary">
-              Get my price
+              Get my quote
             </a>
             <a href={telHref} className="btn-secondary">
               Call {SITE.phone}
@@ -61,7 +62,7 @@ export function Hero() {
 
           <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ash">
             <li className="flex items-center gap-2">
-              <Dot /> Upfront estimate range
+              <Dot /> Free quote from your photos
             </li>
             <li className="flex items-center gap-2">
               <Dot /> Same-day &amp; next-day pickup
