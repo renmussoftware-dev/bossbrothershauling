@@ -292,14 +292,19 @@
       Text a photo for a quote
     </a>
 
-    <button class="btn" type="button" id="save-contact">
+    <!-- A real .vcf served with a text/vcard Content-Type, NOT a blob: URL.
+         iOS Safari will not pass a blob to the Contacts importer, so the
+         previous JS-generated download silently did nothing on iPhones.
+         No `download` attribute on purpose: letting Safari navigate to the
+         file is what triggers the native "Add to Contacts" sheet. -->
+    <a class="btn" href="/assets/boss-brothers-hauling.vcf" type="text/vcard">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M12 3v11m0 0 4-4m-4 4-4-4"/>
         <path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>
       </svg>
-      <span id="save-contact-label">Save contact</span>
-    </button>
+      Save contact
+    </a>
 
     <a class="btn" href="https://bossbrothershauling.com" target="_blank" rel="noopener">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -343,50 +348,8 @@
 </main>
 
 <script>
-(function () {
-  'use strict';
-
+  // The only script on the page: the footer year. Everything else is markup.
   document.getElementById('year').textContent = new Date().getFullYear();
-
-  // vCard 3.0 — the format every phone's contacts app still accepts.
-  // CRLF line endings are required by RFC 2426; Android's importer is strict.
-  var VCARD = [
-    'BEGIN:VCARD',
-    'VERSION:3.0',
-    'N:;Boss Brothers Hauling;;;',
-    'FN:Boss Brothers Hauling',
-    'ORG:Boss Brothers Hauling LLC',
-    'TITLE:Junk Removal & Hauling',
-    'TEL;TYPE=WORK,VOICE:+18502815184',
-    'URL:https://bossbrothershauling.com',
-    'ADR;TYPE=WORK:;;;Gulf Breeze;FL;;USA',
-    'NOTE:Junk removal, hauling and cleanouts - Gulf Breeze, Navarre and Pensacola, FL.',
-    'END:VCARD',
-    ''
-  ].join('\r\n');
-
-  var btn = document.getElementById('save-contact');
-  var label = document.getElementById('save-contact-label');
-
-  btn.addEventListener('click', function () {
-    var blob = new Blob([VCARD], { type: 'text/vcard;charset=utf-8' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = 'boss-brothers-hauling.vcf';
-    a.rel = 'noopener';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    // Revoke late: iOS Safari hands the blob to the Contacts importer
-    // asynchronously and a same-tick revoke can pull it out from under it.
-    setTimeout(function () { URL.revokeObjectURL(url); }, 30000);
-
-    var was = label.textContent;
-    label.textContent = 'Contact downloaded';
-    setTimeout(function () { label.textContent = was; }, 2600);
-  });
-})();
 </script>
 
 </body>
