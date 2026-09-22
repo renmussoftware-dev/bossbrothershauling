@@ -29,3 +29,7 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# Rendered ad images (regenerate with marketing/ads/build.ts)
+/marketing/ads/out/
+/marketing/ads/.build/

@@ -11,8 +11,7 @@ export const SITE = {
   tagline: "Junk gone same day.",
 
   phone: process.env.NEXT_PUBLIC_BUSINESS_PHONE || "(850) 281-5184",
-  // PLACEHOLDER — swap for the real inbox.
-  email: process.env.NEXT_PUBLIC_BUSINESS_EMAIL || "info@bossbrothershauling.com",
+  email: process.env.NEXT_PUBLIC_BUSINESS_EMAIL || "bossbroshauling@gmail.com",
 
   serviceArea: "Santa Rosa County, FL",
   towns: ["Milton", "Pace", "Navarre", "Gulf Breeze", "Bagdad", "Holley"],
