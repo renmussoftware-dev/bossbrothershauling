@@ -24,9 +24,11 @@ export type SubmitOutcome = "sent" | "mailto";
 
 export interface LeadPayload {
   lead: LeadFormParsed;
-  estimateLow: number | null;
-  estimateHigh: number | null;
-  /** Matched trip zone (null when the address wasn't recognized). */
+  /**
+   * Matched trip zone (null when the address wasn't recognized). Business-side
+   * only — the site never shows the customer a dollar figure, so this travel
+   * fee exists purely to brief whoever makes the call-back.
+   */
   tripZone: TripZoneMatch | null;
   photos: File[];
 }
@@ -52,7 +54,7 @@ export async function submitLead(payload: LeadPayload): Promise<SubmitOutcome> {
 }
 
 /** Flat, human-readable field names so provider emails read cleanly. */
-function buildFormData({ lead, estimateLow, estimateHigh, tripZone, photos }: LeadPayload): FormData {
+function buildFormData({ lead, tripZone, photos }: LeadPayload): FormData {
   const fd = new FormData();
   fd.append("Name", lead.name);
   fd.append("Phone", lead.phone);
@@ -60,17 +62,14 @@ function buildFormData({ lead, estimateLow, estimateHigh, tripZone, photos }: Le
   fd.append("Pickup address", lead.address);
   fd.append("Timeframe", timeframeLabel(lead.timeframe));
   fd.append("Load categories", lead.categories.join(", ") || "—");
-  fd.append("Load size", lead.loadSize);
   fd.append("Regular tires", String(lead.regularTires));
   fd.append("Large tires", String(lead.largeTires));
   fd.append("Mattresses", String(lead.mattresses));
   fd.append("Oversized item", lead.oversized ? "yes" : "no");
   fd.append("Notes", lead.otherText || "—");
   fd.append(
-    "Estimate range",
-    estimateLow != null && estimateHigh != null
-      ? `$${estimateLow}–$${estimateHigh}`
-      : "n/a",
+    "Photos attached",
+    photos.length > 0 ? String(photos.length) : "none — quote by phone",
   );
   fd.append(
     "Trip zone",
@@ -89,7 +88,7 @@ function buildFormData({ lead, estimateLow, estimateHigh, tripZone, photos }: Le
   return fd;
 }
 
-function buildMailto({ lead, estimateLow, estimateHigh, tripZone, photos }: LeadPayload): string {
+function buildMailto({ lead, tripZone, photos }: LeadPayload): string {
   const subject = `Hauling quote request — ${lead.name}`;
   const body = [
     `Name: ${lead.name}`,
@@ -99,16 +98,10 @@ function buildMailto({ lead, estimateLow, estimateHigh, tripZone, photos }: Lead
     `Timeframe: ${timeframeLabel(lead.timeframe)}`,
     ``,
     `Load: ${lead.categories.join(", ") || "—"}`,
-    `Load size: ${lead.loadSize}`,
     `Regular tires: ${lead.regularTires} · Large tires: ${lead.largeTires}`,
     `Mattresses: ${lead.mattresses} · Oversized: ${lead.oversized ? "yes" : "no"}`,
     `Notes: ${lead.otherText || "—"}`,
     ``,
-    `Site estimate: ${
-      estimateLow != null && estimateHigh != null
-        ? `$${estimateLow}–$${estimateHigh}`
-        : "n/a"
-    }`,
     `Trip zone: ${tripZone ? `${tripZone.place} (${tripZone.zone})` : "unrecognized"}`,
     `Staging agreed: ${lead.stagedReady ? "yes" : "no"}`,
     photos.length > 0

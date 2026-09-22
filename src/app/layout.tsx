@@ -1,9 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Oswald, Inter } from "next/font/google";
+import { Cinzel, Oswald, Inter } from "next/font/google";
 import "./globals.css";
 import { SITE } from "@/lib/site";
 
 // Self-hosted via next/font — no external requests at runtime, no layout shift.
+// Cinzel carries the engraved-serif feel of the truck-wrap wordmark.
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-cinzel",
+  display: "swap",
+});
+
 const oswald = Oswald({
   subsets: ["latin"],
   weight: ["500", "600", "700"],
@@ -24,7 +32,7 @@ export const metadata: Metadata = {
     template: `%s | ${SITE.name}`,
   },
   description:
-    "Same-day junk removal, hauling & storage unit cleanouts across Santa Rosa County, FL — Milton, Pace, Navarre & Gulf Breeze. Build your load, get an instant estimate, we haul it away.",
+    "Same-day junk removal, hauling & storage unit cleanouts across Santa Rosa County, FL — Milton, Pace, Navarre & Gulf Breeze. Send us photos of what you need gone and we'll call you with a free quote.",
   keywords: [
     "junk removal",
     "hauling",
@@ -41,15 +49,24 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: `${SITE.name} — Junk Removal & Hauling`,
-    description: "Build your load, get an instant estimate, we haul it away.",
+    description:
+      "Send photos of what you need gone — we'll call you with a free quote and haul it away.",
     url: SITE.url,
     siteName: SITE.name,
     type: "website",
+    images: ["/og.png"],
+  },
+  icons: {
+    icon: [
+      { url: "/icon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: { url: "/apple-icon-180.png", sizes: "180x180" },
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#12151A",
+  themeColor: "#0B0B0C",
   width: "device-width",
   initialScale: 1,
 };
@@ -60,7 +77,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${oswald.variable} ${inter.variable}`}>
+    <html lang="en" className={`${cinzel.variable} ${oswald.variable} ${inter.variable}`}>
       <body>{children}</body>
     </html>
   );

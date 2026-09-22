@@ -5,7 +5,7 @@
 // ---------------------------------------------------------------------------
 
 export const SITE = {
-  name: "Boss Bros Hauling",
+  name: "Boss Brothers Hauling",
   domain: "bossbrothershauling.com",
   url: "https://bossbrothershauling.com",
   tagline: "Junk gone same day.",
