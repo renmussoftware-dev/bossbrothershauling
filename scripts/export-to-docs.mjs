@@ -9,6 +9,7 @@
 import { cpSync, rmSync, existsSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadEnv, assertEndpointInBundle } from "./lead-endpoint-guard.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const out = join(root, "out");
@@ -17,6 +18,16 @@ const docs = join(root, "docs");
 if (!existsSync(out)) {
   console.error("No ./out folder found — run `next build` first (npm run deploy:docs does both).");
   process.exit(1);
+}
+
+// Refuse to publish a build whose lead endpoint never got inlined. This runs
+// BEFORE the rmSync below on purpose: a bad build must not take /docs with it.
+const endpoint = await loadEnv(root);
+const check = assertEndpointInBundle(out, endpoint);
+if (check.skipped) {
+  console.warn("! No lead endpoint configured — publishing with the mailto fallback.");
+} else {
+  console.log(`✓ Lead endpoint inlined (checked ${check.checked} emitted .js files).`);
 }
 
 // Fresh copy so deleted pages/assets don't linger in /docs.
