@@ -7,6 +7,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 import { leadSchema, type LeadFormValues, timeframeOptions } from "@/lib/schema";
 import { submitLead } from "@/lib/submitLead";
+import { reportQuoteRequestConversion } from "@/lib/gtag";
 import { matchTripZone } from "@/lib/tripZones";
 import type { LoadCategory } from "@/lib/types";
 import { DumpBed, type JunkIcon } from "./DumpBed";
@@ -166,6 +167,9 @@ export function Estimator() {
         tripZone: tripMatch,
         photos,
       });
+      // Only a delivered lead counts — the mailto fallback is just a draft the
+      // visitor may never send.
+      if (outcome === "sent") reportQuoteRequestConversion();
       setSubmitState(outcome === "sent" ? "done" : "done-mailto");
     } catch {
       setSubmitState("error");
