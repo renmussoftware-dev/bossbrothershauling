@@ -65,6 +65,10 @@ export const metadata: Metadata = {
   },
 };
 
+// Google Ads tag. Kept as plain <script> tags in <head> (not next/script) so it
+// lands in the static HTML of every exported page.
+const GOOGLE_TAG_ID = "AW-18483670133";
+
 export const viewport: Viewport = {
   themeColor: "#0B0B0C",
   width: "device-width",
@@ -78,6 +82,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${cinzel.variable} ${oswald.variable} ${inter.variable}`}>
+      <head>
+        {/* Google tag (gtag.js) */}
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_TAG_ID}`} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', '${GOOGLE_TAG_ID}');`,
+          }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );
