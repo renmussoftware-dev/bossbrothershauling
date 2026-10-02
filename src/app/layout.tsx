@@ -27,6 +27,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
+  alternates: { canonical: "/" },
   title: {
     default: `${SITE.name} — Junk Removal & Hauling in ${SITE.serviceArea}`,
     template: `%s | ${SITE.name}`,
@@ -69,6 +70,39 @@ export const metadata: Metadata = {
 // lands in the static HTML of every exported page.
 const GOOGLE_TAG_ID = "AW-18483670133";
 
+// LocalBusiness structured data — ties the site to the Google Business Profile
+// (same name, phone and service area) so Google can match the two.
+const LOCAL_BUSINESS_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": `${SITE.url}/#business`,
+  name: SITE.name,
+  url: SITE.url,
+  telephone: SITE.phone,
+  email: SITE.email,
+  image: `${SITE.url}/og.png`,
+  logo: `${SITE.url}/logo-mark.png`,
+  description: `Junk removal, hauling and storage unit cleanouts in ${SITE.serviceArea}.`,
+  areaServed: [
+    { "@type": "AdministrativeArea", name: SITE.serviceArea },
+    ...SITE.towns.map((town) => ({ "@type": "City", name: `${town}, FL` })),
+  ],
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "07:00",
+      closes: "18:00",
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: "Saturday",
+      opens: "08:00",
+      closes: "16:00",
+    },
+  ],
+};
+
 export const viewport: Viewport = {
   themeColor: "#0B0B0C",
   width: "device-width",
@@ -93,6 +127,10 @@ gtag('js', new Date());
 
 gtag('config', '${GOOGLE_TAG_ID}');`,
           }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(LOCAL_BUSINESS_JSON_LD) }}
         />
       </head>
       <body>{children}</body>
